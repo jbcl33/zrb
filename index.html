@@ -431,8 +431,14 @@
       cells.forEach(c => c.contentEditable = 'false');
     }
     try {
+      const w = page.offsetWidth;
+      const h = page.offsetHeight;
+      // 目标约 400 DPI：A4 宽 210mm ≈ 3307px，用 transform 放大以保证文字清晰
+      const scale = Math.min(6, 3307 / w);
       const dataUrl = await htmlToImage.toPng(page, {
-        pixelRatio: 3,
+        width: Math.round(w * scale),
+        height: Math.round(h * scale),
+        style: { transform: `scale(${scale})`, transformOrigin: 'top left' },
         backgroundColor: '#ffffff'
       });
       const link = document.createElement('a');
