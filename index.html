@@ -38,21 +38,6 @@
     min-height: 297mm;
   }
 
-  /* —— 装饰几何（包豪斯） —— */
-  .geo { position: absolute; }
-  .geo.circle {
-    top: 40px; right: 48px;
-    width: 44px; height: 44px;
-    border-radius: 50%;
-    background: var(--blue);
-  }
-  .geo.triangle {
-    top: 108px; right: 58px;
-    width: 0; height: 0;
-    border-left: 15px solid transparent;
-    border-right: 15px solid transparent;
-    border-bottom: 26px solid var(--yellow);
-  }
 
   /* —— 左右两栏构图：标题左侧纵向，表格右侧 —— */
   .layout {
@@ -244,8 +229,6 @@
     .sec-num { font-size: 22px; }
     .sec-title { font-size: 16px; }
     .footer-note { display: none; }
-    .geo.circle { width: 30px; height: 30px; top: 20px; right: 20px; }
-    .geo.triangle { top: 58px; right: 26px; border-left-width: 10px; border-right-width: 10px; border-bottom-width: 17px; }
     .geo-bar { width: 22px; height: 22px; background: var(--red); }
     .geo-circle { width: 22px; height: 22px; }
     .geo-tri { border-left-width: 11px; border-right-width: 11px; border-bottom-width: 19px; }
@@ -266,8 +249,6 @@
 <button class="edit-toggle" id="editBtn">编 辑 模 式</button>
 <div class="sheet">
   <div class="page">
-    <span class="geo circle"></span>
-    <span class="geo triangle"></span>
 
     <div class="layout">
       <div class="title-block">
