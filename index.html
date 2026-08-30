@@ -355,14 +355,59 @@
 </div>
 </body>
 <script>
+  const KEY = 'dorm-roster-data';
   const btn = document.getElementById('editBtn');
-  const cells = document.querySelectorAll('td');
+  const cells = Array.from(document.querySelectorAll('td'));
   let editing = false;
+
+  // 保存当前表格数据
+  function save() {
+    const data = Array.from(document.querySelectorAll('table')).map(t => {
+      const rows = Array.from(t.querySelectorAll('tbody tr'));
+      return rows.map(r => Array.from(r.querySelectorAll('td')).map(td => td.innerHTML));
+    });
+    localStorage.setItem(KEY, JSON.stringify(data));
+  }
+
+  // 加载保存的数据
+  function load() {
+    const raw = localStorage.getItem(KEY);
+    if (!raw) return;
+    try {
+      const data = JSON.parse(raw);
+      const tables = document.querySelectorAll('table');
+      data.forEach((tableData, ti) => {
+        const tbody = tables[ti]?.querySelector('tbody');
+        if (!tbody) return;
+        Array.from(tbody.querySelectorAll('tr')).forEach((tr, ri) => {
+          const rowData = tableData[ri];
+          if (!rowData) return;
+          Array.from(tr.querySelectorAll('td')).forEach((td, di) => {
+            if (rowData[di] !== undefined) td.innerHTML = rowData[di];
+          });
+        });
+      });
+    } catch (e) {}
+  }
+
+  // 编辑模式切换
   btn.addEventListener('click', () => {
     editing = !editing;
     document.body.classList.toggle('editing', editing);
     btn.textContent = editing ? '退 出 编 辑' : '编 辑 模 式';
     cells.forEach(c => c.contentEditable = editing ? 'true' : 'false');
+    if (!editing) save(); // 退出编辑时保存
   });
+
+  // 实时保存（每次输入后延迟保存）
+  let timer;
+  document.addEventListener('input', () => {
+    if (!editing) return;
+    clearTimeout(timer);
+    timer = setTimeout(save, 500);
+  });
+
+  // 页面加载时恢复
+  load();
 </script>
 </html>
