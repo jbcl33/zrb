@@ -1,0 +1,368 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>宿舍值日表</title>
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700;800;900&family=Archivo:wght@400;700;900&display=swap" rel="stylesheet">
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  :root {
+    --red: #d3202e;
+    --blue: #1f4fa3;
+    --yellow: #f2b90f;
+    --ink: #141414;
+    --paper: #f7f5ef;
+  }
+
+  body {
+    font-family: "Montserrat", "Microsoft YaHei", "PingFang SC", sans-serif;
+    background: var(--paper);
+    color: var(--ink);
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
+
+  .sheet {
+    max-width: 960px;
+    margin: 0 auto;
+    background: none;
+  }
+  .page {
+    background: #fff;
+    padding: 44px 48px 48px;
+    position: relative;
+    overflow: hidden;
+  }
+
+  /* —— 装饰几何（包豪斯） —— */
+  .geo { position: absolute; }
+  .geo.circle {
+    top: 40px; right: 48px;
+    width: 44px; height: 44px;
+    border-radius: 50%;
+    background: var(--blue);
+  }
+  .geo.triangle {
+    top: 108px; right: 58px;
+    width: 0; height: 0;
+    border-left: 15px solid transparent;
+    border-right: 15px solid transparent;
+    border-bottom: 26px solid var(--yellow);
+  }
+
+  /* —— 左右两栏构图：标题左侧纵向，表格右侧 —— */
+  .layout {
+    display: flex;
+    gap: 44px;
+    align-items: flex-start;
+    margin-top: 30px;
+  }
+  .title-block {
+    display: flex;
+    align-items: flex-start;
+    gap: 24px;
+    flex-shrink: 0;
+  }
+  .content { flex: 1; min-width: 0; }
+
+  h1 {
+    font-family: "Microsoft YaHei", "PingFang SC", sans-serif;
+    font-size: clamp(56px, 9vw, 96px);
+    font-weight: 900;
+    writing-mode: vertical-rl;
+    letter-spacing: 0;
+    line-height: 1;
+    text-align: left;
+    color: var(--ink);
+    flex-shrink: 0;
+  }
+  .title-side {
+    display: flex;
+    flex-direction: column;
+    gap: 22px;
+    padding-top: 4px;
+  }
+  .kicker {
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: .35em;
+    text-transform: uppercase;
+    color: var(--red);
+    line-height: 1.9;
+    writing-mode: vertical-rl;
+  }
+  .title-geo { display: flex; flex-direction: column; gap: 14px; align-items: center; }
+  .geo-circle {
+    width: 30px; height: 30px;
+    border-radius: 50%;
+    background: var(--blue);
+    flex-shrink: 0;
+  }
+  .geo-tri {
+    width: 0; height: 0;
+    border-left: 12px solid transparent;
+    border-right: 12px solid transparent;
+    border-bottom: 21px solid var(--yellow);
+  }
+  .geo-bar {
+    height: 100px;
+    width: 10px;
+    background: var(--red);
+  }
+
+  /* —— 章节标题 —— */
+  section { margin-top: 0; }
+  section + section { margin-top: 34px; }
+  .sec-head {
+    display: flex;
+    align-items: baseline;
+    gap: 14px;
+    margin-bottom: 12px;
+  }
+  .sec-num {
+    font-family: "Montserrat", "Microsoft YaHei", sans-serif;
+    font-size: 30px;
+    font-weight: 900;
+    color: var(--ink);
+  }
+  .sec-title {
+    font-size: 20px;
+    font-weight: 800;
+    letter-spacing: .2em;
+  }
+  .sec-shape { align-self: center; }
+  .shape-circle {
+    width: 24px; height: 24px;
+    border-radius: 50%;
+    background: var(--blue);
+  }
+  .shape-square {
+    width: 20px; height: 20px;
+    background: var(--red);
+  }
+  .shape-tri {
+    width: 0; height: 0;
+    border-left: 13px solid transparent;
+    border-right: 13px solid transparent;
+    border-bottom: 22px solid var(--yellow);
+  }
+
+  /* —— 现代极简表格 —— */
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 13.5px;
+  }
+  th {
+    font-family: "Montserrat", "Microsoft YaHei", sans-serif;
+    background: var(--ink);
+    color: #fff;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: .3em;
+    text-align: left;
+    padding: 11px 14px;
+  }
+  td {
+    border: none;
+    padding: 12px 14px;
+    text-align: left;
+    font-weight: 500;
+  }
+  tbody tr { background: #fff; transition: background .15s; }
+  tbody tr:hover { background: #f3f0e6; }
+  td.week {
+    font-family: "Montserrat", "Microsoft YaHei", sans-serif;
+    font-weight: 800;
+    letter-spacing: .06em;
+  }
+
+  /* —— 编辑模式 —— */
+  .edit-toggle {
+    position: fixed;
+    top: 16px;
+    right: 16px;
+    font-family: "Montserrat", "Microsoft YaHei", sans-serif;
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: .15em;
+    padding: 10px 18px;
+    background: var(--ink);
+    color: #fff;
+    border: none;
+    cursor: pointer;
+    z-index: 99;
+  }
+  body.editing .edit-toggle { background: var(--red); }
+  body.editing td { cursor: text; }
+  body.editing td:focus {
+    outline: 1.5px dashed var(--blue);
+    outline-offset: -1px;
+    background: #eef2f8;
+  }
+  body.editing td[contenteditable="true"] { background: #f9fafc; }
+
+  /* —— 页脚 —— */
+  footer {
+    margin-top: 34px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    font-size: 12px;
+    font-weight: 500;
+    color: #555;
+  }
+  .strip { display: flex; height: 10px; }
+  .strip span { width: 22px; height: 10px; }
+  .strip .r { background: var(--red); }
+  .strip .b { background: var(--blue); }
+  .strip .y { background: var(--yellow); }
+  .footer-note {
+    font-size: 11px;
+    letter-spacing: .2em;
+    text-transform: uppercase;
+    font-weight: 600;
+  }
+
+  @media (max-width: 720px) {
+    body { padding: 0; }
+    .page { padding: 28px 20px; }
+    .layout { flex-direction: column; gap: 20px; margin-top: 8px; }
+    .title-block { flex-direction: row; align-items: flex-start; gap: 14px; }
+    h1 { font-size: clamp(40px, 11vw, 64px); }
+    .title-side { padding-top: 0; gap: 14px; }
+    .kicker { letter-spacing: .3em; font-size: 11px; }
+    .title-geo { gap: 12px; }
+    .content table { font-size: 12px; }
+    .content th, .content td { padding: 8px 10px; }
+    section + section { margin-top: 22px; }
+    .sec-num { font-size: 22px; }
+    .sec-title { font-size: 16px; }
+    .footer-note { display: none; }
+    .geo.circle { width: 30px; height: 30px; top: 20px; right: 20px; }
+    .geo.triangle { top: 58px; right: 26px; border-left-width: 10px; border-right-width: 10px; border-bottom-width: 17px; }
+    .geo-bar { width: 22px; height: 22px; background: var(--red); }
+    .geo-circle { width: 22px; height: 22px; }
+    .geo-tri { border-left-width: 11px; border-right-width: 11px; border-bottom-width: 19px; }
+  }
+
+  @media print {
+    body { background: #fff; padding: 0; }
+    .sheet { background: none; padding: 0; }
+    tbody tr:hover { background: #fff; }
+    .edit-toggle { display: none; }
+    body.editing td { background: #fff; }
+  }
+</style>
+</head>
+<body>
+<button class="edit-toggle" id="editBtn">编 辑 模 式</button>
+<div class="sheet">
+  <div class="page">
+    <span class="geo circle"></span>
+    <span class="geo triangle"></span>
+
+    <div class="layout">
+      <div class="title-block">
+        <h1>宿舍值日表</h1>
+        <div class="title-side">
+          <div class="kicker">Dorm<br>Duty<br>Roster</div>
+          <div class="title-geo">
+            <span class="geo-circle"></span>
+            <span class="geo-tri"></span>
+            <span class="geo-bar"></span>
+          </div>
+        </div>
+      </div>
+
+      <div class="content">
+        <section>
+          <div class="sec-head">
+            <span class="sec-num">一</span>
+            <span class="sec-title">值日安排</span>
+            <span class="sec-shape shape-square"></span>
+          </div>
+          <table>
+            <thead>
+              <tr><th>值日星期</th><th>值日人员</th><th>负责区域</th></tr>
+            </thead>
+            <tbody>
+              <tr><td class="week">星期一</td><td>王浩然</td><td>地面 / 垃圾</td></tr>
+              <tr><td class="week">星期二</td><td>吴敏辉</td><td>桌面 / 窗台</td></tr>
+              <tr><td class="week">星期三</td><td>吴晋成</td><td>卫生间</td></tr>
+              <tr><td class="week">星期四</td><td>王可富</td><td>地面 / 垃圾</td></tr>
+              <tr><td class="week">星期五</td><td>方懿拓</td><td>阳台 / 公共区域</td></tr>
+              <tr><td class="week">星期六</td><td>王浩然</td><td>卫生间</td></tr>
+              <tr><td class="week">星期日</td><td>全部</td><td>大扫除 / 全面整理</td></tr>
+            </tbody>
+          </table>
+        </section>
+
+        <section>
+          <div class="sec-head">
+            <span class="sec-num">二</span>
+            <span class="sec-title">值日标准</span>
+            <span class="sec-shape shape-circle"></span>
+          </div>
+          <table>
+            <thead>
+              <tr><th>项目</th><th>达标要求</th><th>备注</th></tr>
+            </thead>
+            <tbody>
+              <tr><td class="week">地面</td><td>无垃圾、无明显灰尘</td><td></td></tr>
+              <tr><td class="week">垃圾</td><td>当日清空并投放</td><td></td></tr>
+              <tr><td class="week">桌面</td><td>物品摆放整齐</td><td></td></tr>
+              <tr><td class="week">卫生间</td><td>洗漱池、地面清洁无异味</td><td></td></tr>
+              <tr><td class="week">阳台 / 公共区</td><td>衣物收纳整齐、无杂物</td><td></td></tr>
+              <tr><td class="week">门窗 / 窗台</td><td>无灰尘、开关正常</td><td></td></tr>
+            </tbody>
+          </table>
+        </section>
+
+        <section>
+          <div class="sec-head">
+            <span class="sec-num">三</span>
+            <span class="sec-title">值日记录</span>
+            <span class="sec-shape shape-tri"></span>
+          </div>
+          <table>
+            <thead>
+              <tr><th>日期</th><th>值日人</th><th>完成情况</th><th>检查人</th><th>备注</th></tr>
+            </thead>
+            <tbody>
+              <tr><td>&nbsp;</td><td></td><td>优 □ &nbsp; 良 □ &nbsp; 差 □</td><td></td><td></td></tr>
+              <tr><td>&nbsp;</td><td></td><td>优 □ &nbsp; 良 □ &nbsp; 差 □</td><td></td><td></td></tr>
+              <tr><td>&nbsp;</td><td></td><td>优 □ &nbsp; 良 □ &nbsp; 差 □</td><td></td><td></td></tr>
+              <tr><td>&nbsp;</td><td></td><td>优 □ &nbsp; 良 □ &nbsp; 差 □</td><td></td><td></td></tr>
+            </tbody>
+          </table>
+        </section>
+      </div>
+    </div>
+
+    <footer>
+      <div class="strip">
+        <span class="r"></span><span class="b"></span><span class="y"></span>
+        <span class="r"></span><span class="b"></span><span class="y"></span>
+        <span class="r"></span><span class="b"></span><span class="y"></span>
+      </div>
+      <span class="footer-note">Form follows function.</span>
+    </footer>
+  </div>
+</div>
+</body>
+<script>
+  const btn = document.getElementById('editBtn');
+  const cells = document.querySelectorAll('td');
+  let editing = false;
+  btn.addEventListener('click', () => {
+    editing = !editing;
+    document.body.classList.toggle('editing', editing);
+    btn.textContent = editing ? '退 出 编 辑' : '编 辑 模 式';
+    cells.forEach(c => c.contentEditable = editing ? 'true' : 'false');
+  });
+</script>
+</html>
