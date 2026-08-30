@@ -356,38 +356,87 @@
 </body>
 <script>
   const KEY = 'dorm-roster-data';
+  const SUPABASE_URL = 'https://uyuhbfwqnxwzvwdvjwdl.supabase.co';
+  const SUPABASE_KEY = 'sb_publishable_BzzjxNEacZ81oJPfOHA0VA_OSzSlmhs';
   const btn = document.getElementById('editBtn');
   const cells = Array.from(document.querySelectorAll('td'));
   let editing = false;
 
-  // 保存当前表格数据
-  function save() {
-    const data = Array.from(document.querySelectorAll('table')).map(t => {
+  // 采集当前表格数据
+  function collect() {
+    return Array.from(document.querySelectorAll('table')).map(t => {
       const rows = Array.from(t.querySelectorAll('tbody tr'));
       return rows.map(r => Array.from(r.querySelectorAll('td')).map(td => td.innerHTML));
     });
-    localStorage.setItem(KEY, JSON.stringify(data));
   }
 
-  // 加载保存的数据
-  function load() {
-    const raw = localStorage.getItem(KEY);
-    if (!raw) return;
-    try {
-      const data = JSON.parse(raw);
-      const tables = document.querySelectorAll('table');
-      data.forEach((tableData, ti) => {
-        const tbody = tables[ti]?.querySelector('tbody');
-        if (!tbody) return;
-        Array.from(tbody.querySelectorAll('tr')).forEach((tr, ri) => {
-          const rowData = tableData[ri];
-          if (!rowData) return;
-          Array.from(tr.querySelectorAll('td')).forEach((td, di) => {
-            if (rowData[di] !== undefined) td.innerHTML = rowData[di];
-          });
+  // 把数据写回表格
+  function apply(data) {
+    if (!Array.isArray(data)) return;
+    const tables = document.querySelectorAll('table');
+    data.forEach((tableData, ti) => {
+      const tbody = tables[ti]?.querySelector('tbody');
+      if (!tbody) return;
+      Array.from(tbody.querySelectorAll('tr')).forEach((tr, ri) => {
+        const rowData = tableData[ri];
+        if (!rowData) return;
+        Array.from(tr.querySelectorAll('td')).forEach((td, di) => {
+          if (rowData[di] !== undefined) td.innerHTML = rowData[di];
         });
       });
-    } catch (e) {}
+    });
+  }
+
+  // 保存：先写本地缓存，再上传云端
+  function save() {
+    const data = collect();
+    localStorage.setItem(KEY, JSON.stringify(data));
+    upload(data);
+  }
+
+  // 上传云端（PATCH 更新 roster 表 id=1 行的 data 列）
+  async function upload(data) {
+    try {
+      const res = await fetch(`${SUPABASE_URL}/rest/v1/roster?id=eq.1`, {
+        method: 'PATCH',
+        headers: {
+          'apikey': SUPABASE_KEY,
+          'Authorization': `Bearer ${SUPABASE_KEY}`,
+          'Content-Type': 'application/json',
+          'Prefer': 'return=minimal'
+        },
+        body: JSON.stringify({ data: data })
+      });
+      if (!res.ok) throw new Error('HTTP ' + res.status);
+    } catch (e) {
+      console.warn('云端保存失败（roster 表可能未创建），已保存到本地缓存。', e);
+    }
+  }
+
+  // 加载：优先云端，失败回退本地缓存
+  async function load() {
+    try {
+      const res = await fetch(`${SUPABASE_URL}/rest/v1/roster?id=eq.1&select=data`, {
+        headers: {
+          'apikey': SUPABASE_KEY,
+          'Authorization': `Bearer ${SUPABASE_KEY}`
+        }
+      });
+      if (!res.ok) throw new Error('HTTP ' + res.status);
+      const rows = await res.json();
+      const data = Array.isArray(rows) && rows[0] ? rows[0].data : null;
+      if (data != null) {
+        apply(data);
+        localStorage.setItem(KEY, JSON.stringify(data));
+        return;
+      }
+      throw new Error('empty');
+    } catch (e) {
+      console.warn('云端加载失败，回退本地缓存。', e);
+      const raw = localStorage.getItem(KEY);
+      if (!raw) return;
+      try { apply(JSON.parse(raw)); } catch (e2) {}
+    }
   }
 
   // 编辑模式切换
