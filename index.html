@@ -166,11 +166,16 @@
     letter-spacing: .06em;
   }
 
-  /* —— 编辑模式 —— */
-  .edit-toggle {
+  /* —— 顶部工具栏（导出 / 编辑） —— */
+  .toolbar {
     position: fixed;
     top: 16px;
     right: 16px;
+    display: flex;
+    gap: 8px;
+    z-index: 99;
+  }
+  .toolbar button {
     font-family: "Montserrat", "Microsoft YaHei", sans-serif;
     font-size: 12px;
     font-weight: 700;
@@ -180,7 +185,6 @@
     color: #fff;
     border: none;
     cursor: pointer;
-    z-index: 99;
   }
   body.editing .edit-toggle { background: var(--red); }
   body.editing td { cursor: text; }
@@ -240,13 +244,16 @@
     body { background: #fff; padding: 0; }
     .sheet { background: none; padding: 0; margin: 0; }
     tbody tr:hover { background: #fff; }
-    .edit-toggle { display: none; }
+    .toolbar { display: none; }
     body.editing td { background: #fff; }
   }
 </style>
 </head>
 <body>
-<button class="edit-toggle" id="editBtn">编 辑 模 式</button>
+<div class="toolbar">
+  <button class="export-toggle" id="exportBtn">导 出 图 片</button>
+  <button class="edit-toggle" id="editBtn">编 辑 模 式</button>
+</div>
 <div class="sheet">
   <div class="page">
 
@@ -320,6 +327,7 @@
   </div>
 </div>
 </body>
+<script src="https://cdn.jsdelivr.net/npm/html-to-image@1.11.11/dist/html-to-image.js"></script>
 <script>
   const KEY = 'dorm-roster-data';
   const SUPABASE_URL = 'https://uyuhbfwqnxwzvwdvjwdl.supabase.co';
@@ -412,6 +420,34 @@
     btn.textContent = editing ? '退 出 编 辑' : '编 辑 模 式';
     cells.forEach(c => c.contentEditable = editing ? 'true' : 'false');
     if (!editing) save(); // 退出编辑时保存
+  });
+
+  // 导出高清 A4 图片
+  document.getElementById('exportBtn').addEventListener('click', async () => {
+    const page = document.querySelector('.page');
+    const wasEditing = editing;
+    if (wasEditing) {
+      document.body.classList.remove('editing');
+      cells.forEach(c => c.contentEditable = 'false');
+    }
+    try {
+      const dataUrl = await htmlToImage.toPng(page, {
+        pixelRatio: 3,
+        backgroundColor: '#ffffff'
+      });
+      const link = document.createElement('a');
+      link.download = '宿舍值日表.png';
+      link.href = dataUrl;
+      link.click();
+    } catch (e) {
+      console.error('导出失败', e);
+      alert('导出失败，可改用 Ctrl+P 打印为 PDF。');
+    } finally {
+      if (wasEditing) {
+        document.body.classList.add('editing');
+        cells.forEach(c => c.contentEditable = 'true');
+      }
+    }
   });
 
   // 实时保存（每次输入后延迟保存）
