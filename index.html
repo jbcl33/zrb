@@ -24,6 +24,40 @@ button{font-family:inherit;cursor:pointer;border:none;background:none;color:inhe
 #topbar .tabs button.on{color:#fff;background:var(--ink)}
 body{margin-top:52px}
 
+/* ---------- 首页：包豪斯方块入口 ---------- */
+#moduleH .home-wrap{max-width:900px;margin:0 auto;padding:56px 24px 90px}
+#moduleH .home-title{display:flex;align-items:center;justify-content:center;gap:22px;margin-bottom:44px}
+#moduleH .home-title h1{font-family:"Microsoft YaHei",sans-serif;font-size:clamp(30px,5vw,44px);font-weight:900;letter-spacing:.18em}
+#moduleH .home-geo{display:inline-block;flex:none}
+#moduleH .g-c{width:26px;height:26px;border-radius:50%;background:var(--blue)}
+#moduleH .g-t{width:0;height:0;border-left:14px solid transparent;border-right:14px solid transparent;border-bottom:24px solid var(--yellow)}
+#moduleH .home-grid{display:grid;grid-template-columns:1fr 1fr;gap:32px}
+#moduleH .hcard{position:relative;background:#fff;aspect-ratio:1/1;max-height:420px;display:flex;flex-direction:column;justify-content:center;align-items:center;gap:12px;padding:32px;text-align:center;transition:transform .18s, box-shadow .18s}
+#moduleH .hc-roster{box-shadow:10px 10px 0 var(--yellow)}
+#moduleH .hc-bank{box-shadow:10px 10px 0 var(--blue)}
+#moduleH .hc-roster:hover{transform:translate(-4px,-4px);box-shadow:16px 16px 0 var(--yellow)}
+#moduleH .hc-bank:hover{transform:translate(-4px,-4px);box-shadow:16px 16px 0 var(--blue)}
+#moduleH .hc-geo{display:flex;align-items:flex-end;gap:16px;height:44px;margin-bottom:8px}
+#moduleH .g-circle{width:34px;height:34px;border-radius:50%;background:var(--blue)}
+#moduleH .g-tri{width:0;height:0;border-left:17px solid transparent;border-right:17px solid transparent;border-bottom:30px solid var(--yellow)}
+#moduleH .g-bar{width:12px;height:44px;background:var(--red)}
+#moduleH .hc-bank .g-circle{background:var(--red)}
+#moduleH .hc-bank .g-tri{border-bottom-color:var(--blue)}
+#moduleH .hc-bank .g-bar{background:var(--yellow)}
+#moduleH .hc-name{font-family:"Microsoft YaHei",sans-serif;font-size:clamp(26px,3.4vw,36px);font-weight:900;letter-spacing:.14em}
+#moduleH .hc-sub{font-size:11px;font-weight:700;letter-spacing:.35em;color:var(--red)}
+#moduleH .hc-bank .hc-sub{color:var(--blue)}
+#moduleH .hc-desc{margin-top:6px;font-size:13px;line-height:1.9;color:var(--sub)}
+#moduleH .hc-strip{position:absolute;left:0;right:0;bottom:0;display:flex;height:10px}
+#moduleH .hc-strip span{flex:1;height:10px}
+#moduleH .hc-strip .r{background:var(--red)}
+#moduleH .hc-strip .b{background:var(--blue)}
+#moduleH .hc-strip .y{background:var(--yellow)}
+@media (max-width:680px){
+  #moduleH .home-grid{grid-template-columns:1fr;gap:24px}
+  #moduleH .hcard{aspect-ratio:auto;max-height:none;padding:36px 28px 44px}
+}
+
 /* ===================== 模块一：宿舍值日表（原样式，作用域 #moduleR） ===================== */
 #moduleR .sheet{width:210mm;max-width:100%;margin:24px auto;background:none}
 #moduleR .page{background:#fff;padding:44px 48px 48px;position:relative;overflow:hidden;min-height:297mm}
@@ -88,28 +122,28 @@ body{margin-top:52px}
 #moduleB .qb-head{position:sticky;top:52px;z-index:50;background:rgba(247,245,239,.94);backdrop-filter:blur(8px);border-bottom:1px solid var(--line)}
 #moduleB .hwrap{max-width:1180px;margin:0 auto;padding:12px 24px;display:flex;align-items:center;gap:16px;flex-wrap:wrap}
 #moduleB .search{flex:1;min-width:220px;position:relative}
-#moduleB .search input{width:100%;padding:9px 14px 9px 36px;border:2px solid var(--ink);background:#fff;font-size:14px;color:var(--ink);outline:none;font-family:inherit}
-#moduleB .search input:focus{box-shadow:3px 3px 0 var(--yellow)}
+#moduleB .search input{width:100%;padding:9px 14px 9px 36px;border:none;background:#fff;font-size:14px;color:var(--ink);outline:none;font-family:inherit;box-shadow:0 0 0 1.5px var(--line)}
+#moduleB .search input:focus{box-shadow:0 0 0 1.5px var(--yellow), 4px 4px 0 var(--yellow)}
 #moduleB .search svg{position:absolute;left:11px;top:50%;transform:translateY(-50%);width:16px;height:16px;stroke:var(--sub);fill:none;stroke-width:2}
 #moduleB .tpills{display:flex;gap:6px}
-#moduleB .tpill{padding:7px 16px;font-size:13px;font-weight:700;color:var(--sub);border:2px solid var(--ink);background:#fff;letter-spacing:.05em}
-#moduleB .tpill.on{background:var(--ink);color:#fff}
+#moduleB .tpill{padding:7px 16px;font-size:13px;font-weight:700;color:var(--sub);border:none;background:#fff;letter-spacing:.05em;box-shadow:0 0 0 1.5px var(--line)}
+#moduleB .tpill.on{background:var(--ink);color:#fff;box-shadow:none}
 #moduleB .wrap{max-width:1180px;margin:0 auto;padding:26px 24px 80px;display:grid;grid-template-columns:232px 1fr;gap:28px;align-items:start}
 #moduleB .side{position:sticky;top:116px;display:flex;flex-direction:column;gap:8px}
-#moduleB .cat{display:flex;align-items:center;gap:10px;padding:11px 14px;text-align:left;border:2px solid transparent;background:none;transition:all .15s}
+#moduleB .cat{display:flex;align-items:center;gap:10px;padding:11px 14px;text-align:left;border:none;background:none;transition:all .15s}
 #moduleB .cat:hover{background:#EFEBDD}
-#moduleB .cat.on{background:#fff;border-color:var(--ink);box-shadow:3px 3px 0 rgba(20,20,20,.12)}
+#moduleB .cat.on{background:#fff;box-shadow:4px 4px 0 var(--yellow)}
 #moduleB .cat .dot{width:10px;height:10px;flex:none}
 #moduleB .cat .nm{font-size:14px;font-weight:700}
 #moduleB .cat .ct{margin-left:auto;font-size:12px;color:var(--sub);font-variant-numeric:tabular-nums}
 #moduleB .side .note{font-size:11px;color:var(--sub);padding:6px 4px 0;line-height:1.6}
-#moduleB .chead{background:#fff;border:2px solid var(--ink);border-top:6px solid var(--ink);padding:18px 22px 16px;margin-bottom:16px}
+#moduleB .chead{background:#fff;border:none;border-top:6px solid var(--red);padding:18px 22px 16px;margin-bottom:16px}
 #moduleB .chead h2{font-family:"Microsoft YaHei",sans-serif;font-size:19px;display:flex;align-items:baseline;gap:12px;font-weight:800}
 #moduleB .chead h2 .st{font-size:12.5px;color:var(--sub);font-weight:400}
 #moduleB .kwline{display:flex;flex-wrap:wrap;gap:6px;margin-top:12px}
-#moduleB .kw{padding:4px 11px;font-size:12.5px;border:1.5px solid var(--ink);background:#fff;color:var(--ink);font-weight:600}
+#moduleB .kw{padding:4px 11px;font-size:12.5px;border:1.5px solid var(--line);background:#fff;color:var(--ink);font-weight:600}
 #moduleB .kw .n{opacity:.65;font-size:11px;margin-left:3px}
-#moduleB .q{background:#fff;border:2px solid var(--line);border-left:5px solid var(--ink);padding:14px 18px 13px;margin-bottom:12px}
+#moduleB .q{background:#fff;border:none;border-left:6px solid var(--ink);padding:14px 18px 13px;margin-bottom:12px}
 #moduleB .q .tag{display:inline-block;font-size:11.5px;font-weight:700;padding:2px 9px;margin-right:9px;vertical-align:1px;letter-spacing:.03em}
 #moduleB .q .t{display:inline;font-weight:700;font-size:14.5px}
 #moduleB .q mark{padding:0 2px;font-weight:800;background:none}
@@ -152,13 +186,49 @@ body{margin-top:52px}
 <!-- ========== 模块切换栏 ========== -->
 <nav id="topbar">
   <div class="tabs">
-    <button data-mod="roster" class="on">宿舍值日表</button>
+    <button data-mod="home" class="on">首 页</button>
+    <button data-mod="roster">宿舍值日表</button>
     <button data-mod="bank">电工刷题</button>
   </div>
 </nav>
 
+<!-- ========== 首页：两个包豪斯方块 ========== -->
+<div id="moduleH" class="module on">
+  <div class="home-wrap">
+    <div class="home-title">
+      <span class="home-geo g-c"></span>
+      <h1>宿舍工具站</h1>
+      <span class="home-geo g-t"></span>
+    </div>
+    <div class="home-grid">
+      <button class="hcard hc-roster" onclick="switchMod('roster')">
+        <div class="hc-geo">
+          <span class="g-circle"></span>
+          <span class="g-tri"></span>
+          <span class="g-bar"></span>
+        </div>
+        <div class="hc-name">宿舍值日表</div>
+        <div class="hc-sub">DORM DUTY ROSTER</div>
+        <div class="hc-desc">值日安排 · 值日标准<br>在线编辑 · 云端同步 · 导出高清图</div>
+        <div class="hc-strip"><span class="r"></span><span class="b"></span><span class="y"></span></div>
+      </button>
+      <button class="hcard hc-bank" onclick="switchMod('bank')">
+        <div class="hc-geo">
+          <span class="g-tri"></span>
+          <span class="g-bar"></span>
+          <span class="g-circle"></span>
+        </div>
+        <div class="hc-name">电工刷题</div>
+        <div class="hc-sub">ELECTRICIAN QUIZ</div>
+        <div class="hc-desc">514 道关键词专项题<br>分类筛选 · 搜索 · 考点速记</div>
+        <div class="hc-strip"><span class="y"></span><span class="r"></span><span class="b"></span></div>
+      </button>
+    </div>
+  </div>
+</div>
+
 <!-- ========== 模块一：宿舍值日表 ========== -->
-<div id="moduleR" class="module on">
+<div id="moduleR" class="module">
   <div class="sheet">
     <div class="page">
       <div class="toolbar">
@@ -269,11 +339,14 @@ body{margin-top:52px}
 <script src="https://cdn.jsdelivr.net/npm/html-to-image@1.11.11/dist/html-to-image.js"></script>
 <script>
 /* ===================== 模块切换 ===================== */
+const MOD_IDS = { home:'moduleH', roster:'moduleR', bank:'moduleB' };
 function switchMod(name){
+  if(!MOD_IDS[name]) name = 'home';
   document.querySelectorAll('.module').forEach(m=>m.classList.remove('on'));
-  document.getElementById(name==='roster'?'moduleR':'moduleB').classList.add('on');
+  document.getElementById(MOD_IDS[name]).classList.add('on');
   document.querySelectorAll('#topbar .tabs button').forEach(b=>b.classList.toggle('on', b.dataset.mod===name));
   location.hash = name;
+  window.scrollTo(0, 0);
 }
 document.querySelectorAll('#topbar .tabs button').forEach(b=>b.onclick=()=>switchMod(b.dataset.mod));
 
@@ -415,9 +488,9 @@ function renderSide(){
 function renderHead(){
   const el = document.getElementById('chead');
   if(state.cat === -1){
-    el.style.borderTopColor = 'var(--ink)';
+    el.style.borderTopColor = 'var(--red)';
     el.innerHTML = `<h2>全部提取题目<span class="st">共 ${D.meta.extracted} 题 · 来自 6 类关键词</span></h2>
-      <div class="kwline">${CATS.map(c=>`<button class="kw" data-c="${c.id}" style="border-color:${c.accent}"><span style="color:${c.accent};font-weight:800">${c.name}</span><span class="n">${c.total}</span></button>`).join('')}</div>`;
+      <div class="kwline">${CATS.map(c=>`<button class="kw" data-c="${c.id}" style="border-color:${c.accent};color:${c.accent}"><span style="font-weight:800">${c.name}</span><span class="n">${c.total}</span></button>`).join('')}</div>`;
     el.querySelectorAll('.kw').forEach(b=>b.onclick=()=>{state.cat=+b.dataset.c;state.kw=null;render();});
     return;
   }
@@ -425,7 +498,7 @@ function renderHead(){
   el.style.borderTopColor = c.accent;
   el.innerHTML = `<h2><span style="color:${c.accent}">${c.name}</span><span class="st">命中 ${c.total} 题 · 判断 ${c.js} · 单选 ${c.dx}</span></h2>
     <div class="kwline">${Object.entries(c.hits).map(([k,n])=>
-      `<button class="kw" data-k="${esc(k)}" style="${state.kw===k?`background:${c.accent};color:#fff;border-color:${c.accent}`:''}">${esc(k)}<span class="n">${n}</span></button>`).join('')}
+      `<button class="kw" data-k="${esc(k)}" style="${state.kw===k?`background:${c.accent};color:#fff;border-color:${c.accent}`:`border-color:${c.accent}66;color:${c.accent}`}">${esc(k)}<span class="n">${n}</span></button>`).join('')}
     </div>`;
   el.querySelectorAll('.kw').forEach(b=>b.onclick=()=>{
     state.kw = (state.kw===b.dataset.k) ? null : b.dataset.k; render();
@@ -496,9 +569,8 @@ document.getElementById('foot').innerHTML =
 
 render();
 
-/* 初始模块：hash 优先，默认值日表 */
-const initMod = location.hash.replace('#','');
-if(initMod==='bank') switchMod('bank');
+/* 初始模块：hash 优先，默认首页 */
+switchMod(location.hash.replace('#','') || 'home');
 </script>
 </body>
 </html>
