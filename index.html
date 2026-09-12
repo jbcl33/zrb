@@ -18,25 +18,37 @@ button{font-family:inherit;cursor:pointer;border:none;background:none;color:inhe
 .module.on{display:block}
 
 /* ---------- 顶部模块切换栏 ---------- */
-#topbar{position:fixed;top:0;left:0;right:0;z-index:100;background:rgba(255,255,255,.96);backdrop-filter:blur(8px);border-bottom:1px solid var(--line);padding:0 20px;height:52px;display:flex;align-items:center;gap:4px}
-#topbar .tabs{display:flex;gap:6px}
-#topbar .tabs button{font-size:13.5px;font-weight:700;letter-spacing:.12em;padding:9px 18px;color:var(--sub);border:2px solid transparent}
-#topbar .tabs button.on{color:#fff;background:var(--ink)}
+#topbar{position:fixed;top:0;left:0;right:0;z-index:100;background:transparent;padding:0 22px;height:52px;display:flex;align-items:center;justify-content:flex-end}
+#topbar .tabs{display:flex;gap:16px;align-items:center}
+#topbar .tabs button{width:38px;height:38px;padding:0;display:flex;align-items:center;justify-content:center;background:none;border:none;cursor:pointer}
+#topbar .tabs button .ic{transition:transform .22s}
+#topbar .tabs button.on .ic{transform:scale(1.35)}
+#topbar .ic-dot{width:14px;height:14px;border-radius:50%;background:var(--ink)}
+#topbar .ic-sq{width:16px;height:16px;background:var(--red)}
+#topbar .ic-tri{width:0;height:0;border-left:11px solid transparent;border-right:11px solid transparent;border-bottom:19px solid var(--yellow)}
 body{margin-top:52px}
 
-/* ---------- 首页：极简几何入口 ---------- */
-#moduleH .home-wrap{max-width:760px;margin:0 auto;padding:90px 24px 90px}
-#moduleH .home-grid{display:grid;grid-template-columns:1fr 1fr;gap:48px;max-width:560px;margin:0 auto}
-#moduleH .hcard{display:flex;flex-direction:column;align-items:center;gap:22px;padding:36px 24px;background:#fff;transition:transform .18s}
-#moduleH .hcard:hover{transform:translateY(-6px)}
-#moduleH .shape-sq{width:110px;height:110px;background:var(--red)}
-#moduleH .shape-tri{width:0;height:0;border-left:64px solid transparent;border-right:64px solid transparent;border-bottom:112px solid var(--yellow)}
-#moduleH .hc-name{font-family:"Microsoft YaHei",sans-serif;font-size:22px;font-weight:800;letter-spacing:.12em}
+/* ---------- 首页：几何构成（无文字） ---------- */
+#moduleH{position:fixed;top:0;left:0;right:0;bottom:0;overflow:hidden;z-index:1}
+#moduleH .sh-red{position:absolute;left:0;top:0;bottom:0;width:72px;background:var(--red);border:none;cursor:pointer;transition:width .55s cubic-bezier(.7,0,.3,1)}
+#moduleH .sh-tri{position:absolute;right:0;bottom:0;width:40vw;height:36vh;background:var(--yellow);border:none;cursor:pointer;clip-path:polygon(100% 100%,100% 0,0 100%);transition:width .6s cubic-bezier(.7,0,.3,1),height .6s cubic-bezier(.7,0,.3,1)}
+#moduleH .sh-dot{position:absolute;left:160px;bottom:30vh;width:52px;height:52px;border-radius:50%;background:var(--blue)}
+#moduleH.anim-red .sh-red{width:100vh}
+#moduleH.anim-yellow .sh-tri{width:100vw;height:100vh}
+#moduleH .sh-label{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);z-index:6;pointer-events:none;font-family:"Microsoft YaHei","PingFang SC",sans-serif;font-size:clamp(40px,7vw,88px);font-weight:900;letter-spacing:.2em;color:var(--ink);opacity:0}
+#moduleH.anim-red .sh-label,#moduleH.anim-yellow .sh-label{animation:labelout .62s ease forwards}
+@keyframes labelout{0%{opacity:0}22%{opacity:1}100%{opacity:0}}
 @media (max-width:680px){
-  #moduleH .home-grid{gap:32px}
-  #moduleH .shape-sq{width:84px;height:84px}
-  #moduleH .shape-tri{border-left-width:50px;border-right-width:50px;border-bottom-width:86px}
+  #moduleH .sh-red{width:48px}
+  #moduleH .sh-tri{width:56vw;height:30vh}
+  #moduleH .sh-dot{left:110px;bottom:30vh;width:36px;height:36px}
 }
+
+/* ---------- 转场色幕 ---------- */
+.veil{position:fixed;left:0;top:0;right:0;bottom:0;z-index:90;opacity:0;pointer-events:none;transition:opacity .34s ease}
+.veil.show{opacity:1}
+.veil-red{background:var(--red)}
+.veil-yellow{background:var(--yellow)}
 
 /* ===================== 模块一：宿舍值日表（原样式，作用域 #moduleR） ===================== */
 #moduleR .sheet{width:210mm;max-width:100%;margin:24px auto;background:none}
@@ -117,7 +129,7 @@ body{margin-top:52px}
 #moduleB .cat .nm{font-size:13.5px;font-weight:600}
 #moduleB .cat .ct{margin-left:auto;font-size:11.5px;color:var(--sub);font-variant-numeric:tabular-nums}
 #moduleB .side .note{font-size:10.5px;color:var(--sub);padding:6px 4px 0;line-height:1.6}
-#moduleB .chead{background:#fff;border:none;border-top:6px solid var(--red);border-bottom:1px solid var(--line);padding:16px 20px 14px;margin-bottom:16px}
+#moduleB .chead{background:#fff;border:none;border-top:6px solid var(--ink);border-bottom:1px solid var(--line);padding:16px 20px 14px;margin-bottom:16px}
 #moduleB .chead h2{font-family:"Microsoft YaHei",sans-serif;font-size:18px;display:flex;align-items:baseline;gap:12px;font-weight:800}
 #moduleB .chead h2 .st{font-size:12px;color:var(--sub);font-weight:400}
 #moduleB .kwline{display:flex;flex-wrap:wrap;gap:6px;margin-top:10px}
@@ -169,27 +181,22 @@ body{margin-top:52px}
 <!-- ========== 模块切换栏 ========== -->
 <nav id="topbar">
   <div class="tabs">
-    <button data-mod="home" class="on">首 页</button>
-    <button data-mod="roster">宿舍值日表</button>
-    <button data-mod="bank">电工刷题</button>
+    <button data-mod="home" class="on" title="首页"><span class="ic ic-dot"></span></button>
+    <button data-mod="roster" title="宿舍值日表"><span class="ic ic-sq"></span></button>
+    <button data-mod="bank" title="电工刷题"><span class="ic ic-tri"></span></button>
   </div>
 </nav>
 
-<!-- ========== 首页：极简几何入口 ========== -->
+<!-- ========== 首页：几何构成（无文字） ========== -->
 <div id="moduleH" class="module on">
-  <div class="home-wrap">
-    <div class="home-grid">
-      <button class="hcard" onclick="switchMod('roster')">
-        <span class="shape-sq"></span>
-        <span class="hc-name">宿舍值日表</span>
-      </button>
-      <button class="hcard" onclick="switchMod('bank')">
-        <span class="shape-tri"></span>
-        <span class="hc-name">电工刷题</span>
-      </button>
-    </div>
-  </div>
+  <button class="sh-red" onclick="navTo('roster')" aria-label="宿舍值日表"></button>
+  <button class="sh-tri" onclick="navTo('bank')" aria-label="电工刷题"></button>
+  <span class="sh-dot"></span>
+  <span class="sh-label" id="sh-label"></span>
 </div>
+
+<!-- 转场色幕（跳转时覆盖画面再淡出） -->
+<div class="veil" id="sh-veil"></div>
 
 <!-- ========== 模块一：宿舍值日表 ========== -->
 <div id="moduleR" class="module">
@@ -311,7 +318,25 @@ function switchMod(name){
   location.hash = name;
   window.scrollTo(0, 0);
 }
-document.querySelectorAll('#topbar .tabs button').forEach(b=>b.onclick=()=>switchMod(b.dataset.mod));
+function navTo(name){
+  const H = document.getElementById('moduleH');
+  if(name === 'home' || !H.classList.contains('on')){
+    switchMod(name);
+    return;
+  }
+  if(H.dataset.animing === '1') return;   // 动画进行中，忽略重复点击
+  H.dataset.animing = '1';
+  const label = document.getElementById('sh-label');
+  label.textContent = name === 'roster' ? '宿舍值日表' : '电工刷题';
+  const cls = name === 'roster' ? 'anim-red' : 'anim-yellow';
+  const veil = document.getElementById('sh-veil');
+  veil.className = 'veil ' + (name === 'roster' ? 'veil-red' : 'veil-yellow');
+  H.classList.add(cls);                                            // 形状拉伸 + 文字淡出
+  setTimeout(()=>{ veil.classList.add('show'); }, 500);            // 色幕淡入覆盖画面
+  setTimeout(()=>{ switchMod(name); H.classList.remove(cls); }, 860);   // 幕下切换模块
+  setTimeout(()=>{ veil.classList.remove('show'); H.dataset.animing = '0'; }, 900);   // 色幕淡出露出目标
+}
+document.querySelectorAll('#topbar .tabs button').forEach(b=>b.onclick=()=>navTo(b.dataset.mod));
 
 /* ===================== 模块一：宿舍值日表（原功能：编辑/导出/云端同步） ===================== */
 (function(){
@@ -438,7 +463,7 @@ function renderSide(){
       <span class="nm">全部提取题目</span><span class="ct">${D.meta.extracted}</span></button>`;
   for(const c of CATS){
     h += `<button class="cat ${state.cat===c.id?'on':''}" data-c="${c.id}">
-      <span class="dot" style="background:${c.accent}"></span>
+      <span class="dot" style="background:var(--ink)"></span>
       <span class="nm">${c.name}</span><span class="ct">${c.total}</span></button>`;
   }
   h += `<div class="note">自官方 ${D.meta.totalBank} 道解析题目（判断 ${D.meta.js} · 单选 ${D.meta.dx}）中按 6 组高频关键词提取，共 ${D.meta.extracted} 道（含跨类重叠）。</div>`;
@@ -450,18 +475,17 @@ function renderSide(){
 
 function renderHead(){
   const el = document.getElementById('chead');
+  el.style.borderTopColor = 'var(--ink)';
   if(state.cat === -1){
-    el.style.borderTopColor = 'var(--red)';
     el.innerHTML = `<h2>全部提取题目<span class="st">共 ${D.meta.extracted} 题 · 来自 6 类关键词</span></h2>
-      <div class="kwline">${CATS.map(c=>`<button class="kw" data-c="${c.id}" style="border-color:${c.accent};color:${c.accent}"><span style="font-weight:800">${c.name}</span><span class="n">${c.total}</span></button>`).join('')}</div>`;
+      <div class="kwline">${CATS.map(c=>`<button class="kw" data-c="${c.id}"><span style="font-weight:800">${c.name}</span><span class="n">${c.total}</span></button>`).join('')}</div>`;
     el.querySelectorAll('.kw').forEach(b=>b.onclick=()=>{state.cat=+b.dataset.c;state.kw=null;render();});
     return;
   }
   const c = CATS[state.cat];
-  el.style.borderTopColor = c.accent;
-  el.innerHTML = `<h2><span style="color:${c.accent}">${c.name}</span><span class="st">命中 ${c.total} 题 · 判断 ${c.js} · 单选 ${c.dx}</span></h2>
+  el.innerHTML = `<h2>${c.name}<span class="st">命中 ${c.total} 题 · 判断 ${c.js} · 单选 ${c.dx}</span></h2>
     <div class="kwline">${Object.entries(c.hits).map(([k,n])=>
-      `<button class="kw" data-k="${esc(k)}" style="${state.kw===k?`background:${c.accent};color:#fff;border-color:${c.accent}`:`border-color:${c.accent}66;color:${c.accent}`}">${esc(k)}<span class="n">${n}</span></button>`).join('')}
+      `<button class="kw" data-k="${esc(k)}" ${state.kw===k?'style="background:var(--ink);color:#fff;border-color:var(--ink)"':''}>${esc(k)}<span class="n">${n}</span></button>`).join('')}
     </div>`;
   el.querySelectorAll('.kw').forEach(b=>b.onclick=()=>{
     state.kw = (state.kw===b.dataset.k) ? null : b.dataset.k; render();
@@ -476,17 +500,16 @@ function hilite(text){
   if(state.kw) kws = [state.kw, ...kws.filter(k=>k!==state.kw)];
   const escaped = esc(text);
   if(!kws.length) return escaped;
-  const accent = state.cat>=0 ? CATS[state.cat].accent : '#141414';
-  const tint   = state.cat>=0 ? CATS[state.cat].tint   : '#EBEBEB';
+  const accent = '#141414';
+  const tint   = '#EBEBEB';
   const pat = new RegExp(kws.map(k=>esc(k).replace(/[.*+?^${}()|[\]\\]/g,'\\$&')).join('|'),'g');
   return escaped.replace(pat, m=>`<mark style="background:${tint};color:${accent}">${m}</mark>`);
 }
 
 function card(q){
-  const cat = state.cat>=0 ? CATS[state.cat] : CATS[q.c[0]];
   const kindTxt = q.k===0 ? '判断题' : '单选题';
-  let h = `<div class="q" style="border-top-color:${cat.accent}">
-    <span class="tag" style="background:${cat.tint};color:${cat.accent}">[${kindTxt} · 第${q.n}题]</span><span class="t">${hilite(q.t)}</span>`;
+  let h = `<div class="q" style="border-top-color:var(--ink)">
+    <span class="tag" style="background:#EFEFEF;color:var(--ink)">[${kindTxt} · 第${q.n}题]</span><span class="t">${hilite(q.t)}</span>`;
   if(q.o.length){
     h += `<div class="opts">` + q.o.map(([l,t,hit])=>
       `<div class="opt ${hit?'hit':''}">${l}. ${hilite(t)}</div>`).join('') + `</div>`;
@@ -495,7 +518,7 @@ function card(q){
   if(q.s) h += `<div class="sum">${esc(q.s)}</div>`;
   h += `</div>`;
   if(state.cat===-1 && q.c.length>1){
-    h += `<div class="cats">` + q.c.map(id=>`<span class="cmini" style="background:${CATS[id].accent}">${CATS[id].name}</span>`).join('') + `</div>`;
+    h += `<div class="cats">` + q.c.map(id=>`<span class="cmini" style="background:var(--ink)">${CATS[id].name}</span>`).join('') + `</div>`;
   }
   return h + `</div>`;
 }
