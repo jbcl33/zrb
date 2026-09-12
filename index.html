@@ -31,9 +31,9 @@ body{margin-top:52px}
 
 /* ---------- 首页：几何构成（无文字） ---------- */
 #moduleH{position:fixed;top:0;left:0;right:0;bottom:0;overflow:hidden;z-index:1}
-#moduleH .sh-red{position:absolute;left:0;top:0;bottom:0;width:72px;background:var(--red);border:none;cursor:pointer;transition:width .55s cubic-bezier(.7,0,.3,1)}
+#moduleH .sh-red{position:absolute;left:0;top:0;bottom:0;width:72px;background:var(--red);border:none;cursor:pointer;transition:width .55s cubic-bezier(.7,0,.3,1),box-shadow .55s cubic-bezier(.7,0,.3,1)}
 #moduleH .sh-tri{position:absolute;right:0;bottom:0;width:40vw;height:36vh;background:var(--yellow);border:none;cursor:pointer;clip-path:polygon(100% 100%,100% 0,0 100%);transition:width .6s cubic-bezier(.7,0,.3,1),height .6s cubic-bezier(.7,0,.3,1)}
-#moduleH .sh-dot{position:absolute;left:160px;bottom:30vh;width:52px;height:52px;border-radius:50%;background:var(--blue)}
+#moduleH .sh-dot{position:absolute;left:0;top:0;width:52px;height:52px;border-radius:50%;background:var(--blue);will-change:transform}
 #moduleH.anim-red .sh-red{width:100vh}
 #moduleH.anim-yellow .sh-tri{width:100vw;height:100vh}
 #moduleH .sh-label{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);z-index:6;pointer-events:none;font-family:"Microsoft YaHei","PingFang SC",sans-serif;font-size:clamp(40px,7vw,88px);font-weight:900;letter-spacing:.2em;color:var(--ink);opacity:0}
@@ -42,9 +42,16 @@ body{margin-top:52px}
 @media (max-width:680px){
   #moduleH .sh-red{width:48px}
   #moduleH .sh-tri{width:60vw;height:32vh}
-  #moduleH .sh-dot{left:104px;bottom:30vh;width:34px;height:34px}
+  #moduleH .sh-dot{width:34px;height:34px}
   #moduleH.anim-red .sh-red{width:100vw}
 }
+
+/* ---------- 首页：汉字碎片（偏旁部首）物理 ---------- */
+#frag-layer{position:absolute;inset:0;z-index:5;pointer-events:none;overflow:hidden}
+#frag-layer .frag{position:absolute;left:0;top:0;font-family:"Microsoft YaHei","PingFang SC",sans-serif;font-weight:700;line-height:1;white-space:nowrap;will-change:transform,opacity;transition:opacity .25s ease}
+#frag-layer .char{position:absolute;left:0;top:0;font-family:"Microsoft YaHei","PingFang SC",sans-serif;font-weight:900;line-height:1;color:var(--ink);opacity:0;will-change:transform,opacity;transition:opacity .3s ease}
+#moduleH.assemble .sh-red{width:26vw;box-shadow:inset -14px 0 0 rgba(0,0,0,.16)}
+@media (max-width:680px){#moduleH.assemble .sh-red{width:44vw}}
 
 /* ---------- 转场色幕 ---------- */
 .veil{position:fixed;left:0;top:0;right:0;bottom:0;z-index:90;opacity:0;pointer-events:none;transition:opacity .34s ease}
@@ -123,6 +130,9 @@ body{margin-top:52px}
 #moduleB .tpills{display:flex;gap:5px}
 #moduleB .tpill{flex:1;padding:6px 4px;font-size:13.5px;font-weight:700;color:var(--sub);border:none;background:#F5F5F5}
 #moduleB .tpill.on{background:var(--ink);color:#fff}
+#moduleB .wrongbtn{margin-top:10px;width:100%;padding:8px 4px;font-size:13px;font-weight:800;letter-spacing:.08em;color:var(--sub);background:#fff;border:1.5px solid var(--line);cursor:pointer;transition:all .15s}
+#moduleB .wrongbtn:hover{color:var(--ink);border-color:var(--ink)}
+#moduleB .wrongbtn.on{background:var(--red);border-color:var(--red);color:#fff}
 #moduleB .side{display:flex;flex-direction:column;gap:2px}
 #moduleB .cat{display:flex;align-items:center;gap:10px;padding:8px 4px;text-align:left;border:none;background:none;cursor:pointer}
 #moduleB .cat .nm{font-size:15px;font-weight:600;color:#4a4a4a;transition:color .15s}
@@ -223,6 +233,7 @@ body{margin-top:52px}
   <button class="sh-tri" onclick="navTo('bank')" aria-label="电工刷题"></button>
   <span class="sh-dot"></span>
   <span class="sh-label" id="sh-label"></span>
+  <div id="frag-layer"></div>
 </div>
 
 <!-- 转场色幕（跳转时覆盖画面再淡出） -->
@@ -323,6 +334,7 @@ body{margin-top:52px}
           <button class="tpill" data-t="0">判断题</button>
           <button class="tpill" data-t="1">单选题</button>
         </div>
+        <button class="wrongbtn" id="wrongBtn">错 题 本（335）</button>
       </div>
       <nav class="side" id="side"></nav>
     </div>
@@ -337,6 +349,7 @@ body{margin-top:52px}
 </div>
 
 <script src="data.js"></script>
+<script src="wrong.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/html-to-image@1.11.11/dist/html-to-image.js"></script>
 <script>
 /* ===================== 模块切换 ===================== */
@@ -348,6 +361,7 @@ function switchMod(name){
   document.querySelectorAll('#topbar .tabs button').forEach(b=>b.classList.toggle('on', b.dataset.mod===name));
   location.hash = name;
   window.scrollTo(0, 0);
+  if(name === 'home' && window.fragReset) window.fragReset();
 }
 function navTo(name){
   const H = document.getElementById('moduleH');
@@ -357,17 +371,236 @@ function navTo(name){
   }
   if(H.dataset.animing === '1') return;   // 动画进行中，忽略重复点击
   H.dataset.animing = '1';
-  const label = document.getElementById('sh-label');
-  label.textContent = name === 'roster' ? '宿舍值日表' : '电工刷题';
-  const cls = name === 'roster' ? 'anim-red' : 'anim-yellow';
-  const veil = document.getElementById('sh-veil');
-  veil.className = 'veil ' + (name === 'roster' ? 'veil-red' : 'veil-yellow');
-  H.classList.add(cls);                                            // 形状拉伸 + 文字淡出
-  setTimeout(()=>{ veil.classList.add('show'); }, 500);            // 色幕淡入覆盖画面
-  setTimeout(()=>{ switchMod(name); H.classList.remove(cls); }, 860);   // 幕下切换模块
-  setTimeout(()=>{ veil.classList.remove('show'); H.dataset.animing = '0'; }, 900);   // 色幕淡出露出目标
+  window.fragAssemble(name);              // roster → 红条碎片组装；bank → 黄三角碎片组装
 }
 document.querySelectorAll('#topbar .tabs button').forEach(b=>b.onclick=()=>navTo(b.dataset.mod));
+
+/* ===================== 首页：汉字碎片（偏旁部首）物理引擎 ===================== */
+(function(){
+  const layer = document.getElementById('frag-layer');
+  if(!layer) return;
+  const H = document.getElementById('moduleH');
+  const SETS = [
+    { key:'roster', title:['宿','舍','值','日','表'],
+      parts:[['宀','亻','百'],['人','干','口'],['亻','直'],['日'],['主','衣']],
+      palette:['var(--red)','var(--blue)','var(--ink)','var(--orange)','var(--green)','var(--violet)'] },
+    { key:'bank', title:['电','工','刷','题'],
+      parts:[['田','乚'],['一','丨','一'],['尸','巾','刂'],['日','疋','丆','贝']],
+      palette:['var(--orange)','var(--blue)','var(--ink)','var(--red)','var(--green)','var(--violet)'] },
+  ];
+  const GRAV = 920, REST = 0.62;
+
+  const frags = [], chars = [];
+  let mode = 'scatter', assembleStart = 0, activeSet = null, activeFrags = [], assembling = false;
+  let last = performance.now();
+
+  SETS.forEach(set=>{
+    set.title.forEach((ch, i)=>{
+      const el = document.createElement('span');
+      el.className = 'char'; el.textContent = ch; el.style.zIndex = '6';
+      layer.appendChild(el);
+      chars.push({ el, i, set });
+    });
+    set.parts.forEach((parts, ci)=>{
+      parts.forEach((p, pi)=>{
+        const el = document.createElement('span');
+        el.className = 'frag'; el.textContent = p;
+        const fs = 52 + Math.random()*14;
+        el.style.fontSize = fs + 'px';
+        el.style.color = set.palette[(ci + pi) % set.palette.length];
+        layer.appendChild(el);
+        frags.push({ el, ci, pi, set, x:0, y:0, vx:0, vy:0, r: fs*0.55, rot:0 });
+      });
+    });
+  });
+
+  const barW  = () => innerWidth < 680 ? 48 : 72;
+  const currentBarW = () => assembling
+    ? (innerWidth < 680 ? Math.round(innerWidth*0.44) : Math.round(innerWidth*0.26))
+    : barW();
+  let dot = null;
+  (function(){
+    const el = H.querySelector('.sh-dot');
+    if(!el) return;
+    el.style.left = '0'; el.style.top = '0';
+    dot = { el, x:0, y:0, vx:0, vy:0, r: innerWidth<680?17:26, m:3 };
+  })();
+  const shTri = H.querySelector('.sh-tri');
+  let triStart = null, triEnd = null, triT0 = 0;
+
+  function collideTri(f){
+    const W = innerWidth, Hh = innerHeight;
+    const Tx = W, Ty = 0.64*Hh, Bx = 0.60*W, By = Hh;
+    const ex = Bx - Tx, ey = By - Ty;
+    const denom = ex*ex + ey*ey || 1;
+    const t = Math.max(0, Math.min(1, ((f.x - Tx)*ex + (f.y - Ty)*ey)/denom));
+    const cx = Tx + t*ex, cy = Ty + t*ey;
+    let dx = f.x - cx, dy = f.y - cy;
+    let d = Math.hypot(dx, dy);
+    if(d < f.r){
+      if(d === 0){ dx = -ey; dy = ex; d = Math.hypot(dx, dy); }
+      const nx = dx/d, ny = dy/d;
+      f.x = cx + nx*f.r; f.y = cy + ny*f.r;
+      const vn = f.vx*nx + f.vy*ny;
+      if(vn < 0){ f.vx -= (1+REST)*vn*nx; f.vy -= (1+REST)*vn*ny; }
+    }
+  }
+  function pair(a, b){
+    const dx = b.x - a.x, dy = b.y - a.y;
+    const d = Math.hypot(dx, dy), rr = a.r + b.r;
+    if(d > 0 && d < rr){
+      const nx = dx/d, ny = dy/d, ov = rr - d;
+      const ma = a.m || 1, mb = b.m || 1, mt = ma + mb;
+      a.x -= nx*ov*(mb/mt); a.y -= ny*ov*(mb/mt);
+      b.x += nx*ov*(ma/mt); b.y += ny*ov*(ma/mt);
+      const vn = (b.vx - a.vx)*nx + (b.vy - a.vy)*ny;
+      if(vn < 0){
+        const imp = -(1+REST)*vn;
+        a.vx -= (imp*mb/mt)*nx; a.vy -= (imp*mb/mt)*ny;
+        b.vx += (imp*ma/mt)*nx; b.vy += (imp*ma/mt)*ny;
+      }
+    }
+  }
+  function scatter(){
+    const W = innerWidth, Hh = innerHeight, bw = barW();
+    frags.forEach(f=>{
+      f.x = bw + 40 + Math.random()*(W - bw - 120);
+      f.y = 60 + Math.random()*(Hh - 120);
+      if(f.x > W*0.6 && f.y > Hh*0.72){ f.x = bw + 40 + Math.random()*(W*0.5 - bw); }
+      f.vx = (Math.random() - 0.5)*280;
+      f.vy = (Math.random() - 0.5)*160;
+      f.rot = (Math.random() - 0.5)*36;
+    });
+    if(dot){
+      dot.r = innerWidth < 680 ? 17 : 26;
+      dot.x = bw + 40 + Math.random()*(W - bw - 120);
+      dot.y = 70 + Math.random()*60;
+      dot.vx = (Math.random() - 0.5)*120;
+      dot.vy = 0;
+      dot.el.style.transform = `translate(${dot.x}px,${dot.y}px) translate(-50%,-50%)`;
+    }
+  }
+  function layout(set, ci){
+    const W = innerWidth;
+    const cs = Math.min(84, Math.max(56, Math.round(W*0.09)));
+    const gap = cs*0.22;
+    if(set.key === 'roster'){
+      const cy = 64 + ci*(cs + gap) + cs*0.5;   // 顶部锚定，靠近网页顶端，避免遮住下方偏旁
+      const bw = innerWidth<680 ? Math.round(W*0.44) : Math.round(W*0.26);
+      return { cx: bw + cs*0.5 + 14, cy, cs };
+    }
+    // bank：2×2 矩形，右上角
+    const m = innerWidth < 680 ? 16 : 28;
+    const top = 64;
+    const row = Math.floor(ci / 2), col = ci % 2;
+    const cx = (W - m - cs*0.5) - (1 - col)*(cs + gap);
+    const cy = top + cs*0.5 + row*(cs + gap);
+    return { cx, cy, cs };
+  }
+  function easeOutBack(t){
+    const c1 = 1.70158, c3 = c1 + 1;
+    return 1 + c3*Math.pow(t-1, 3) + c1*Math.pow(t-1, 2);
+  }
+  function assemble(setKey){
+    if(assembling) return;
+    const set = SETS.find(s=>s.key === setKey);
+    if(!set) return;
+    assembling = true;
+    activeSet = setKey;
+    if(setKey === 'roster'){
+      H.classList.add('assemble');
+    } else {
+      shTri.style.transition = 'none';
+      const r = shTri.getBoundingClientRect();
+      triStart = { w: r.width, h: r.height };
+      triEnd = { w: innerWidth, h: innerHeight };
+      triT0 = performance.now();
+    }
+    assembleStart = performance.now();
+    activeFrags = frags.filter(f=>f.set.key === setKey).map(f=>{ const p = layout(f.set, f.ci); return { f, tx:p.cx, ty:p.cy }; });
+    mode = 'assemble';
+    setTimeout(()=>{                                   // 碎片到位 → 显形完整字
+      chars.filter(c=>c.set.key === setKey).forEach(c=>{ const p = layout(c.set, c.i);
+        c.el.style.fontSize = p.cs + 'px';
+        c.el.style.transform = `translate(${p.cx}px,${p.cy}px) translate(-50%,-50%)`;
+        c.el.style.opacity = '1'; });
+      activeFrags.forEach(a=>{ a.f.el.style.opacity = '0'; });
+      mode = 'assembled';
+    }, 900);
+    const veil = document.getElementById('sh-veil');
+    veil.className = 'veil ' + (setKey === 'roster' ? 'veil-red' : 'veil-yellow');
+    setTimeout(()=>{ veil.classList.add('show'); }, 1500);
+    setTimeout(()=>{ switchMod(setKey === 'roster' ? 'roster' : 'bank'); reset(); }, 1850);
+    setTimeout(()=>{ veil.classList.remove('show'); H.dataset.animing = '0'; }, 1950);
+  }
+  function reset(){
+    H.classList.remove('assemble', 'assemble-bank');
+    if(shTri){ shTri.style.transition = ''; shTri.style.width = ''; shTri.style.height = ''; }
+    chars.forEach(c=>{ c.el.style.opacity = '0'; });
+    frags.forEach(f=>{ f.el.style.opacity = '1'; });
+    scatter(); mode = 'scatter'; assembling = false; activeSet = null; activeFrags = []; triStart = null; triEnd = null;
+  }
+  function applyStatic(f, W, Hh){
+    const bw = currentBarW();
+    if(f.x < f.r){ f.x = f.r; f.vx = Math.abs(f.vx)*REST; }
+    if(f.x > W - f.r){ f.x = W - f.r; f.vx = -Math.abs(f.vx)*REST; }
+    if(f.y < f.r){ f.y = f.r; f.vy = Math.abs(f.vy)*REST; }
+    if(f.y > Hh - f.r){ f.y = Hh - f.r; f.vy = -Math.abs(f.vy)*REST; }
+    if(f.x < bw + f.r){ f.x = bw + f.r; if(f.vx < 0) f.vx = Math.abs(f.vx)*REST; }
+    collideTri(f);
+  }
+  function step(now){
+    const dt = Math.min(0.033, (now - last)/1000); last = now;
+    const W = innerWidth, Hh = innerHeight;
+    if(dot){
+      dot.vy += GRAV*dt; dot.x += dot.vx*dt; dot.y += dot.vy*dt; applyStatic(dot, W, Hh);
+    }
+    if(mode === 'scatter'){
+      for(const f of frags){ f.vy += GRAV*dt; f.x += f.vx*dt; f.y += f.vy*dt; applyStatic(f, W, Hh); }
+      const bodies = dot ? [dot, ...frags] : frags;
+      for(let i=0;i<bodies.length;i++) for(let j=i+1;j<bodies.length;j++) pair(bodies[i], bodies[j]);
+      for(const f of frags)
+        f.el.style.transform = `translate(${f.x}px,${f.y}px) translate(-50%,-50%) rotate(${f.rot}deg)`;
+    } else if(mode === 'assemble'){
+      const idle = frags.filter(f=>f.set.key !== activeSet);
+      for(const f of idle){ f.vy += GRAV*dt; f.x += f.vx*dt; f.y += f.vy*dt; applyStatic(f, W, Hh); }
+      const bodies = dot ? [dot, ...idle] : idle;
+      for(let i=0;i<bodies.length;i++) for(let j=i+1;j<bodies.length;j++) pair(bodies[i], bodies[j]);
+      for(const f of idle)
+        f.el.style.transform = `translate(${f.x}px,${f.y}px) translate(-50%,-50%) rotate(${f.rot}deg)`;
+      const nowMs = performance.now();
+      if(activeSet === 'bank'){
+        const tt = Math.min(1, (nowMs - triT0)/800);
+        const te = 1 - Math.pow(1 - tt, 3);
+        const tw = triStart.w + (triEnd.w - triStart.w)*te;
+        const th = triStart.h + (triEnd.h - triStart.h)*te;
+        shTri.style.width = tw + 'px';
+        shTri.style.height = th + 'px';
+      }
+      for(const a of activeFrags){
+        const f = a.f;
+        const t = Math.max(0, Math.min(1, (nowMs - assembleStart - ((f.ci*40 + f.pi*30) % 180))/620));
+        const e = easeOutBack(t);
+        let x = f.x + (a.tx - f.x)*e;
+        let y = f.y + (a.ty - f.y)*e;
+        if(activeSet === 'bank'){
+          const tt = Math.min(1, (nowMs - triT0)/800);
+          const lift = (1 - tt) * 150;   // 黄三角上升时把碎片「拖上去」
+          y -= lift; x -= lift * 0.35;
+        }
+        f.el.style.transform = `translate(${x}px,${y}px) translate(-50%,-50%) rotate(${f.rot*(1-t)}deg)`;
+        if(t >= 1){ f.x = a.tx; f.y = a.ty; }
+      }
+    }
+    if(dot) dot.el.style.transform = `translate(${dot.x}px,${dot.y}px) translate(-50%,-50%)`;
+    requestAnimationFrame(step);
+  }
+
+  window.fragAssemble = assemble;
+  window.fragReset = reset;
+  scatter();
+  requestAnimationFrame(step);
+})();
 
 /* ===================== 模块一：宿舍值日表（原功能：编辑/导出/云端同步） ===================== */
 (function(){
@@ -483,6 +716,7 @@ document.querySelectorAll('#topbar .tabs button').forEach(b=>b.onclick=()=>navTo
 
 /* ===================== 模块二：电工刷题 ===================== */
 const D = window.QBANK;
+const WB = window.WBANK;
 const CATS = D.cats, QS = D.qs;
 const CAT_STYLE = {
   '灯类':    { c:'var(--yellow)', shape:'tri' },
@@ -493,11 +727,17 @@ const CAT_STYLE = {
   '法律类':   { c:'var(--violet)', shape:'ellipse' },
 };
 const catStyle = n => CAT_STYLE[n] || { c:'var(--ink)', shape:'sq' };
-const state = { cat:-1, kw:null, type:'all', search:'' };
+const state = { cat:-1, kw:null, type:'all', search:'', wrong:false };
 const esc = s => s.replace(/[&<>"']/g, c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 
 function renderSide(){
   const el = document.getElementById('side');
+  if(state.wrong){
+    el.innerHTML = `<button class="cat all on"><span class="ic" style="background:var(--red)"></span>
+        <span class="nm">错题本</span><span class="ct">${WB.meta.total}</span></button>
+      <div class="note">这些是你答错的题（判断 ${WB.meta.js} · 单选 ${WB.meta.dx}）。点「错题本」按钮返回全部题库。</div>`;
+    return;
+  }
   let h = `<button class="cat all ${state.cat===-1?'on':''}" data-c="-1">
       <span class="ic" style="background:var(--ink)"></span>
       <span class="nm">全部题目</span><span class="ct">${D.meta.extracted}</span></button>`;
@@ -507,7 +747,6 @@ function renderSide(){
       <span class="ic ${s.shape}" style="background:${s.c}"></span>
       <span class="nm">${c.name}</span><span class="ct">${c.total}</span></button>`;
   }
-  h += `<div class="note">自官方 ${D.meta.totalBank} 道解析题目（判断 ${D.meta.js} · 单选 ${D.meta.dx}）中按 6 组高频关键词提取，共 ${D.meta.extracted} 道（含跨类重叠）。</div>`;
   el.innerHTML = h;
   el.querySelectorAll('.cat').forEach(b=>b.onclick=()=>{
     state.cat = +b.dataset.c; state.kw = null; render();
@@ -516,6 +755,11 @@ function renderSide(){
 
 function renderHead(){
   const el = document.getElementById('chead');
+  if(state.wrong){
+    el.style.setProperty('--catbar', 'var(--red)');
+    el.innerHTML = `<h2>错题本<span class="st">共 ${WB.meta.total} 题 · 判断 ${WB.meta.js} · 单选 ${WB.meta.dx}</span></h2>`;
+    return;
+  }
   el.style.setProperty('--catbar', state.cat===-1 ? 'var(--ink)' : catStyle(CATS[state.cat].name).c);
   if(state.cat === -1){
     el.innerHTML = `<h2>全部题目<span class="st">共 ${D.meta.extracted} 题 · 来自 6 类关键词</span></h2>
@@ -549,7 +793,7 @@ function hilite(text){
 
 function card(q){
   const kindIco = q.k===0 ? 'circle' : 'tri';
-  const bar = state.cat>=0 ? catStyle(CATS[state.cat].name).c : catStyle(CATS[q.c[0]].name).c;
+  const bar = state.cat>=0 ? catStyle(CATS[state.cat].name).c : (q.c&&q.c.length ? catStyle(CATS[q.c[0]].name).c : 'var(--ink)');
   let h = `<div class="q" style="--catbar:${bar}">
     <span class="tag"><span class="kind-ic ${kindIco}"></span>第${q.n}题</span><span class="t">${hilite(q.t)}</span>`;
   if(q.o.length){
@@ -559,16 +803,16 @@ function card(q){
   h += `<div class="foot"><div class="ans">官方答案：<b>${esc(q.a)}</b></div>`;
   if(q.s) h += `<div class="sum">${esc(q.s)}</div>`;
   h += `</div>`;
-  if(state.cat===-1 && q.c.length>1){
+  if(state.cat===-1 && q.c && q.c.length>1){
     h += `<div class="cats">` + q.c.map(id=>{const s = catStyle(CATS[id].name);return `<span class="cmini ${s.shape}" style="background:${s.c}" title="${CATS[id].name}"></span>`;}).join('') + `</div>`;
   }
   return h + `</div>`;
 }
 
 function current(){
-  let list = QS;
-  if(state.cat>=0) list = list.filter(q=>q.c.includes(state.cat));
-  if(state.kw) list = list.filter(q=>(q.t + q.o.map(o=>o[1]).join('')).includes(state.kw));
+  let list = state.wrong ? WB.qs : QS;
+  if(!state.wrong && state.cat>=0) list = list.filter(q=>q.c.includes(state.cat));
+  if(!state.wrong && state.kw) list = list.filter(q=>(q.t + q.o.map(o=>o[1]).join('')).includes(state.kw));
   if(state.type!=='all') list = list.filter(q=>q.k===+state.type);
   if(state.search){
     const s = state.search.trim();
@@ -596,6 +840,31 @@ document.getElementById('foot').innerHTML =
   `${esc(D.meta.title)} ｜ ${esc(D.meta.src)} ｜ 仅供学习交流`;
 
 render();
+
+/* ---- 错题本按钮：在全部题库 / 错题本 之间切换 ---- */
+const wrongBtn = document.getElementById('wrongBtn');
+wrongBtn.addEventListener('click', ()=>{
+  state.wrong = !state.wrong;
+  wrongBtn.classList.toggle('on', state.wrong);
+  wrongBtn.textContent = state.wrong ? '✓ 错题本 · 点此返回全部' : ('错 题 本（' + WB.meta.total + '）');
+  state.cat = -1; state.kw = null;
+  render();
+});
+wrongBtn.textContent = '错 题 本（' + WB.meta.total + '）';
+
+/* ---- 云端同步：把题库 + 错题本写入 Supabase（与值日表 roster 同库） ----
+   页面加载时自动 upsert（id=1），失败静默——展示始终以 data.js / wrong.js 本地数据为准。 */
+const SB_URL = 'https://uyuhbfwqnxwzvwdvjwdl.supabase.co';
+const SB_KEY = 'sb_publishable_BzzjxNEacZ81oJPfOHA0VA_OSzSlmhs';
+function cloudUpsert(table, data){
+  return fetch(`${SB_URL}/rest/v1/${table}`, {
+    method:'POST',
+    headers:{ 'apikey':SB_KEY, 'Authorization':`Bearer ${SB_KEY}`, 'Content-Type':'application/json', 'Prefer':'resolution=merge-duplicates,return=minimal' },
+    body: JSON.stringify({ id:1, data })
+  }).catch(()=>{});
+}
+cloudUpsert('qbank', window.QBANK);
+cloudUpsert('wrong', window.WBANK);
 
 /* 初始模块：hash 优先，默认首页 */
 switchMod(location.hash.replace('#','') || 'home');

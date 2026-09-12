@@ -1,0 +1,29 @@
+# ===== 抓取 / 登录临时文件（含凭据，切勿提交） =====
+session.pkl
+cookies.txt
+cap_uuid.txt
+captcha.json
+*.png
+*.jpg
+
+# ===== 平台抓取的临时 HTML 缓存 =====
+_*.html
+wronglog.html
+favorite.html
+home.html
+page.html
+answer.html
+answer_mode.html
+examInfo.html
+mem_fix.html
+memorize.html
+pastexam.html
+project_detail.html
+recite_*.html
+weixin_*.html
+
+# ===== 中间数据 / 抓取脚本 / 冗余文件 =====
+*.json
+*.py
+data_new.js
+错题整理.txt
