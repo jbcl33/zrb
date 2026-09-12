@@ -3,125 +3,398 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>低压电工题库 · 关键词专项提取</title>
+<title>宿舍值日表 · 电工刷题</title>
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700;800;900&family=Archivo:wght@400;700;900&display=swap" rel="stylesheet">
 <style>
+/* ===================== 共享：调色板与模块框架 ===================== */
 :root{
-  --ink:#33383F; --sub:#7A8189; --faint:#A8ADB3; --line:#E6E8EA;
-  --bg:#FBFBFA; --card:#F7F7F4; --good:#6E8F72;
+  --red:#d3202e; --blue:#1f4fa3; --yellow:#f2b90f;
+  --ink:#141414; --paper:#f7f5ef; --sub:#6b6759; --line:#E2DED4;
 }
 *{margin:0;padding:0;box-sizing:border-box}
-html{scroll-behavior:smooth}
-body{font-family:"Microsoft YaHei","PingFang SC","Hiragino Sans GB",sans-serif;background:var(--bg);color:var(--ink);font-size:15px;line-height:1.6}
+body{font-family:"Montserrat","Microsoft YaHei","PingFang SC",sans-serif;background:var(--paper);color:var(--ink);font-size:15px;line-height:1.6;-webkit-print-color-adjust:exact;print-color-adjust:exact}
 button{font-family:inherit;cursor:pointer;border:none;background:none;color:inherit}
-::selection{background:#D8DCE1}
+.module{display:none}
+.module.on{display:block}
 
-/* ---------- 顶栏 ---------- */
-header{position:sticky;top:0;z-index:50;background:rgba(251,251,250,.92);backdrop-filter:blur(10px);border-bottom:1px solid var(--line)}
-.hwrap{max-width:1180px;margin:0 auto;padding:14px 24px;display:flex;align-items:center;gap:18px;flex-wrap:wrap}
-.brand{display:flex;flex-direction:column;line-height:1.25;min-width:210px}
-.brand b{font-size:16px;font-weight:700;letter-spacing:.5px}
-.brand span{font-size:11px;color:var(--faint)}
-.search{flex:1;min-width:220px;position:relative}
-.search input{width:100%;padding:9px 14px 9px 36px;border:1px solid var(--line);border-radius:10px;background:#fff;font-size:14px;color:var(--ink);outline:none;transition:border-color .2s, box-shadow .2s}
-.search input:focus{border-color:#B9BEC4;box-shadow:0 0 0 3px rgba(0,0,0,.04)}
-.search svg{position:absolute;left:11px;top:50%;transform:translateY(-50%);width:16px;height:16px;stroke:var(--faint);fill:none;stroke-width:2}
-.tpills{display:flex;gap:6px}
-.tpill{padding:7px 14px;border-radius:999px;font-size:13px;color:var(--sub);border:1px solid var(--line);background:#fff;transition:all .18s}
-.tpill:hover{border-color:#C9CDD2}
-.tpill.on{background:var(--ink);color:#fff;border-color:var(--ink)}
+/* ---------- 顶部模块切换栏 ---------- */
+#topbar{position:fixed;top:0;left:0;right:0;z-index:100;background:rgba(247,245,239,.94);backdrop-filter:blur(8px);border-bottom:2px solid var(--ink);padding:0 20px;height:52px;display:flex;align-items:center;gap:4px}
+#topbar .tabs{display:flex;gap:6px}
+#topbar .tabs button{font-size:13.5px;font-weight:700;letter-spacing:.12em;padding:9px 18px;color:var(--sub);border:2px solid transparent}
+#topbar .tabs button.on{color:#fff;background:var(--ink)}
+body{margin-top:52px}
 
-/* ---------- 主体布局 ---------- */
-.wrap{max-width:1180px;margin:0 auto;padding:26px 24px 80px;display:grid;grid-template-columns:232px 1fr;gap:28px;align-items:start}
+/* ===================== 模块一：宿舍值日表（原样式，作用域 #moduleR） ===================== */
+#moduleR .sheet{width:210mm;max-width:100%;margin:24px auto;background:none}
+#moduleR .page{background:#fff;padding:44px 48px 48px;position:relative;overflow:hidden;min-height:297mm}
+#moduleR .layout{display:flex;gap:44px;align-items:flex-start;margin-top:30px}
+#moduleR .title-block{display:flex;align-items:flex-start;gap:24px;flex-shrink:0}
+#moduleR .content{flex:1;min-width:0}
+#moduleR h1{font-family:"Microsoft YaHei","PingFang SC",sans-serif;font-size:clamp(56px,9vw,96px);font-weight:900;writing-mode:vertical-rl;letter-spacing:0;line-height:1;text-align:left;color:var(--ink);flex-shrink:0}
+#moduleR .title-side{display:flex;flex-direction:column;gap:22px;padding-top:4px}
+#moduleR .kicker{font-size:12px;font-weight:700;letter-spacing:.35em;text-transform:uppercase;color:var(--red);line-height:1.9;writing-mode:vertical-rl}
+#moduleR .title-geo{display:flex;flex-direction:column;gap:14px;align-items:center}
+#moduleR .geo-circle{width:30px;height:30px;border-radius:50%;background:var(--blue);flex-shrink:0}
+#moduleR .geo-tri{width:0;height:0;border-left:12px solid transparent;border-right:12px solid transparent;border-bottom:21px solid var(--yellow)}
+#moduleR .geo-bar{height:100px;width:10px;background:var(--red)}
+#moduleR section + section{margin-top:34px}
+#moduleR .sec-head{display:flex;align-items:baseline;gap:14px;margin-bottom:12px}
+#moduleR .sec-num{font-family:"Montserrat","Microsoft YaHei",sans-serif;font-size:26px;font-weight:900;color:var(--ink)}
+#moduleR .sec-title{font-size:22px;font-weight:800;letter-spacing:.2em}
+#moduleR .sec-shape{align-self:center}
+#moduleR .shape-circle{width:24px;height:24px;border-radius:50%;background:var(--blue)}
+#moduleR .shape-square{width:20px;height:20px;background:var(--red)}
+#moduleR .shape-tri{width:0;height:0;border-left:13px solid transparent;border-right:13px solid transparent;border-bottom:22px solid var(--yellow)}
+#moduleR table{width:90%;border-collapse:collapse;font-size:20px}
+#moduleR th{font-family:"Montserrat","Microsoft YaHei",sans-serif;background:var(--ink);color:#fff;font-size:16px;font-weight:700;letter-spacing:.2em;text-align:left;padding:7px 14px}
+#moduleR td{border:none;padding:12px 14px;text-align:left;font-weight:500}
+#moduleR tbody tr{background:#fff;transition:background .15s}
+#moduleR tbody tr:hover{background:#f3f0e6}
+#moduleR td.week{font-family:"Montserrat","Microsoft YaHei",sans-serif;font-weight:800;letter-spacing:.06em}
+#moduleR .toolbar{position:absolute;top:16px;right:16px;display:flex;gap:8px;z-index:9}
+#moduleR .toolbar button{font-family:"Montserrat","Microsoft YaHei",sans-serif;font-size:12px;font-weight:700;letter-spacing:.15em;padding:10px 18px;background:var(--ink);color:#fff;cursor:pointer}
+#moduleR.editing .edit-toggle{background:var(--red)}
+#moduleR.editing td{cursor:text}
+#moduleR.editing td:focus{outline:1.5px dashed var(--blue);outline-offset:-1px;background:#eef2f8}
+#moduleR.editing td[contenteditable="true"]{background:#f9fafc}
+#moduleR footer{margin-top:34px;display:flex;align-items:center;justify-content:space-between;gap:16px;font-size:12px;font-weight:500;color:#555}
+#moduleR .strip{display:flex;height:10px}
+#moduleR .strip span{width:22px;height:10px}
+#moduleR .strip .r{background:var(--red)}
+#moduleR .strip .b{background:var(--blue)}
+#moduleR .strip .y{background:var(--yellow)}
+#moduleR .footer-note{font-size:11px;letter-spacing:.2em;text-transform:uppercase;font-weight:600}
 
-/* 侧栏 */
-.side{position:sticky;top:86px;display:flex;flex-direction:column;gap:8px}
-.cat{display:flex;align-items:center;gap:10px;padding:11px 14px;border-radius:11px;text-align:left;transition:background .15s;border:1px solid transparent}
-.cat:hover{background:#F1F2F0}
-.cat.on{background:#fff;border-color:var(--line);box-shadow:0 1px 4px rgba(0,0,0,.05)}
-.cat .dot{width:9px;height:9px;border-radius:3px;flex:none}
-.cat .nm{font-size:14px;font-weight:600}
-.cat .ct{margin-left:auto;font-size:12px;color:var(--faint);font-variant-numeric:tabular-nums}
-.side .note{font-size:11px;color:var(--faint);padding:6px 4px 0;line-height:1.5}
+@media (max-width:720px){
+  #moduleR .page{padding:28px 20px;min-height:auto}
+  #moduleR .layout{flex-direction:column;gap:20px;margin-top:8px}
+  #moduleR .title-block{flex-direction:row;align-items:flex-start;gap:14px}
+  #moduleR h1{font-size:clamp(40px,11vw,64px)}
+  #moduleR .title-side{padding-top:0;gap:14px}
+  #moduleR .kicker{letter-spacing:.3em;font-size:11px}
+  #moduleR .title-geo{gap:12px}
+  #moduleR .content table{font-size:16px}
+  #moduleR .content th,#moduleR .content td{padding:8px 10px}
+  #moduleR section + section{margin-top:22px}
+  #moduleR .sec-num{font-size:22px}
+  #moduleR .sec-title{font-size:16px}
+  #moduleR .footer-note{display:none}
+  #moduleR .geo-bar{width:22px;height:22px;background:var(--red)}
+  #moduleR .geo-circle{width:22px;height:22px}
+  #moduleR .geo-tri{border-left-width:11px;border-right-width:11px;border-bottom-width:19px}
+}
 
-/* 章节头 */
-.chead{border-radius:14px;padding:18px 22px 16px;margin-bottom:16px;border:1px solid var(--line);background:#fff}
-.chead h2{font-size:19px;display:flex;align-items:baseline;gap:12px}
-.chead h2 .st{font-size:12.5px;color:var(--sub);font-weight:400}
-.chead .kwline{display:flex;flex-wrap:wrap;gap:6px;margin-top:12px}
-.kw{padding:4px 11px;border-radius:999px;font-size:12.5px;border:1px solid var(--line);background:var(--card);color:var(--sub);transition:all .15s}
-.kw:hover{transform:translateY(-1px)}
-.kw .n{opacity:.65;font-size:11px;margin-left:3px}
-
-/* 卡片 */
-.q{background:var(--card);border-left:3px solid var(--faint);border-radius:10px;padding:14px 18px 13px;margin-bottom:12px}
-.q .tag{display:inline-block;font-size:11.5px;font-weight:600;padding:2px 9px;border-radius:6px;margin-right:9px;vertical-align:1px}
-.q .t{display:inline;font-weight:700;font-size:14.5px}
-.q mark{border-radius:3px;padding:0 2px;font-weight:700}
-.q .opts{margin-top:9px;display:flex;flex-direction:column;gap:4px;font-size:13.5px}
-.q .opt{padding:3px 10px;border-radius:7px;color:var(--ink)}
-.q .opt.hit{color:var(--good);font-weight:700;background:rgba(110,143,114,.09)}
-.q .opt.hit::before{content:"√ ";font-weight:700}
-.q .foot{margin-top:9px;padding-top:8px;border-top:1px dashed var(--line);display:flex;flex-direction:column;gap:3px}
-.q .ans{font-size:13px;color:var(--good);font-weight:700}
-.q .ans b{font-weight:700}
-.q .sum{font-size:12.5px;color:var(--sub)}
-.q .sum::before{content:"考点速记｜";color:var(--faint)}
-.q .cats{margin-top:7px;display:flex;gap:5px;flex-wrap:wrap}
-.q .cmini{font-size:10.5px;padding:1px 8px;border-radius:999px;color:#fff;opacity:.85}
-
-.empty{text-align:center;color:var(--faint);padding:70px 0;font-size:14px}
-.count{font-size:12.5px;color:var(--faint);margin:2px 2px 12px}
-footer{text-align:center;color:var(--faint);font-size:11.5px;padding:26px 0 34px;border-top:1px solid var(--line);max-width:1180px;margin:0 auto}
+/* ===================== 模块二：电工刷题（统一包豪斯风格） ===================== */
+#moduleB .qb-head{position:sticky;top:52px;z-index:50;background:rgba(247,245,239,.94);backdrop-filter:blur(8px);border-bottom:1px solid var(--line)}
+#moduleB .hwrap{max-width:1180px;margin:0 auto;padding:12px 24px;display:flex;align-items:center;gap:16px;flex-wrap:wrap}
+#moduleB .search{flex:1;min-width:220px;position:relative}
+#moduleB .search input{width:100%;padding:9px 14px 9px 36px;border:2px solid var(--ink);background:#fff;font-size:14px;color:var(--ink);outline:none;font-family:inherit}
+#moduleB .search input:focus{box-shadow:3px 3px 0 var(--yellow)}
+#moduleB .search svg{position:absolute;left:11px;top:50%;transform:translateY(-50%);width:16px;height:16px;stroke:var(--sub);fill:none;stroke-width:2}
+#moduleB .tpills{display:flex;gap:6px}
+#moduleB .tpill{padding:7px 16px;font-size:13px;font-weight:700;color:var(--sub);border:2px solid var(--ink);background:#fff;letter-spacing:.05em}
+#moduleB .tpill.on{background:var(--ink);color:#fff}
+#moduleB .wrap{max-width:1180px;margin:0 auto;padding:26px 24px 80px;display:grid;grid-template-columns:232px 1fr;gap:28px;align-items:start}
+#moduleB .side{position:sticky;top:116px;display:flex;flex-direction:column;gap:8px}
+#moduleB .cat{display:flex;align-items:center;gap:10px;padding:11px 14px;text-align:left;border:2px solid transparent;background:none;transition:all .15s}
+#moduleB .cat:hover{background:#EFEBDD}
+#moduleB .cat.on{background:#fff;border-color:var(--ink);box-shadow:3px 3px 0 rgba(20,20,20,.12)}
+#moduleB .cat .dot{width:10px;height:10px;flex:none}
+#moduleB .cat .nm{font-size:14px;font-weight:700}
+#moduleB .cat .ct{margin-left:auto;font-size:12px;color:var(--sub);font-variant-numeric:tabular-nums}
+#moduleB .side .note{font-size:11px;color:var(--sub);padding:6px 4px 0;line-height:1.6}
+#moduleB .chead{background:#fff;border:2px solid var(--ink);border-top:6px solid var(--ink);padding:18px 22px 16px;margin-bottom:16px}
+#moduleB .chead h2{font-family:"Microsoft YaHei",sans-serif;font-size:19px;display:flex;align-items:baseline;gap:12px;font-weight:800}
+#moduleB .chead h2 .st{font-size:12.5px;color:var(--sub);font-weight:400}
+#moduleB .kwline{display:flex;flex-wrap:wrap;gap:6px;margin-top:12px}
+#moduleB .kw{padding:4px 11px;font-size:12.5px;border:1.5px solid var(--ink);background:#fff;color:var(--ink);font-weight:600}
+#moduleB .kw .n{opacity:.65;font-size:11px;margin-left:3px}
+#moduleB .q{background:#fff;border:2px solid var(--line);border-left:5px solid var(--ink);padding:14px 18px 13px;margin-bottom:12px}
+#moduleB .q .tag{display:inline-block;font-size:11.5px;font-weight:700;padding:2px 9px;margin-right:9px;vertical-align:1px;letter-spacing:.03em}
+#moduleB .q .t{display:inline;font-weight:700;font-size:14.5px}
+#moduleB .q mark{padding:0 2px;font-weight:800;background:none}
+#moduleB .q .opts{margin-top:9px;display:flex;flex-direction:column;gap:4px;font-size:13.5px}
+#moduleB .q .opt{padding:3px 10px;color:var(--ink)}
+#moduleB .q .opt.hit{color:#0d5c2e;font-weight:700;background:rgba(13,92,46,.08)}
+#moduleB .q .opt.hit::before{content:"√ ";font-weight:800}
+#moduleB .q .foot{margin-top:9px;padding-top:8px;border-top:1px dashed var(--line);display:flex;flex-direction:column;gap:3px}
+#moduleB .q .ans{font-size:13px;color:#0d5c2e;font-weight:700}
+#moduleB .q .sum{font-size:12.5px;color:var(--sub)}
+#moduleB .q .sum::before{content:"考点速记｜";color:#9a958a}
+#moduleB .q .cats{margin-top:7px;display:flex;gap:5px;flex-wrap:wrap}
+#moduleB .q .cmini{font-size:10.5px;padding:1px 8px;color:#fff;font-weight:700;letter-spacing:.05em}
+#moduleB .empty{text-align:center;color:var(--sub);padding:70px 0;font-size:14px}
+#moduleB .count{font-size:12.5px;color:var(--sub);margin:2px 2px 12px}
+#moduleB footer{text-align:center;color:var(--sub);font-size:11.5px;padding:26px 0 34px;border-top:1px solid var(--line);max-width:1180px;margin:0 auto}
 
 @media (max-width:860px){
-  .wrap{grid-template-columns:1fr;gap:16px;padding:18px 14px 60px}
-  .side{position:static;flex-direction:row;overflow-x:auto;padding-bottom:6px}
-  .side .note{display:none}
-  .cat{flex:none;padding:8px 12px}
-  .hwrap{padding:12px 14px}
+  #moduleB .wrap{grid-template-columns:1fr;gap:16px;padding:18px 14px 60px}
+  #moduleB .side{position:static;flex-direction:row;overflow-x:auto;padding-bottom:6px}
+  #moduleB .side .note{display:none}
+  #moduleB .cat{flex:none;padding:8px 12px}
+  #moduleB .hwrap{padding:12px 14px}
+}
+
+/* ===================== 打印 ===================== */
+@page{size:A4;margin:0}
+@media print{
+  body{margin-top:0}
+  #topbar{display:none}
+  #moduleB .qb-head{position:static}
+  #moduleR tbody tr:hover{background:#fff}
+  #moduleR .toolbar{display:none}
+  #moduleR.editing td{background:#fff}
 }
 </style>
 </head>
 <body>
 
-<header>
-  <div class="hwrap">
-    <div class="brand">
-      <b>低压电工理论题库</b>
-      <span>关键词专项提取 · 考前冲刺</span>
-    </div>
-    <div class="search">
-      <svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="M20 20l-4-4"/></svg>
-      <input id="q" type="text" placeholder="搜索题目 / 选项 / 考点…（如：熔断器、功率因数、工伤）">
-    </div>
-    <div class="tpills" id="tpills">
-      <button class="tpill on" data-t="all">全部</button>
-      <button class="tpill" data-t="0">判断题</button>
-      <button class="tpill" data-t="1">单选题</button>
+<!-- ========== 模块切换栏 ========== -->
+<nav id="topbar">
+  <div class="tabs">
+    <button data-mod="roster" class="on">宿舍值日表</button>
+    <button data-mod="bank">电工刷题</button>
+  </div>
+</nav>
+
+<!-- ========== 模块一：宿舍值日表 ========== -->
+<div id="moduleR" class="module on">
+  <div class="sheet">
+    <div class="page">
+      <div class="toolbar">
+        <button class="export-toggle" id="exportBtn">导 出 图 片</button>
+        <button class="edit-toggle" id="editBtn">编 辑 模 式</button>
+      </div>
+
+      <div class="layout">
+        <div class="title-block">
+          <h1>宿舍值日表</h1>
+          <div class="title-side">
+            <div class="kicker">Dorm<br>Duty<br>Roster</div>
+            <div class="title-geo">
+              <span class="geo-circle"></span>
+              <span class="geo-tri"></span>
+              <span class="geo-bar"></span>
+            </div>
+          </div>
+        </div>
+
+        <div class="content">
+          <section>
+            <div class="sec-head">
+              <span class="sec-num">一</span>
+              <span class="sec-title">值日安排</span>
+              <span class="sec-shape shape-square"></span>
+            </div>
+            <table>
+              <thead>
+                <tr><th>值日星期</th><th>值日人员</th><th>负责区域</th></tr>
+              </thead>
+              <tbody>
+                <tr><td class="week">星期一</td><td>王浩然</td><td rowspan="7">全部区域</td></tr>
+                <tr><td class="week">星期二</td><td>吴敏辉</td></tr>
+                <tr><td class="week">星期三</td><td>吴晋成</td></tr>
+                <tr><td class="week">星期四</td><td></td></tr>
+                <tr><td class="week">星期五</td><td>方懿拓</td></tr>
+                <tr><td class="week">星期六</td><td>武文杰</td></tr>
+                <tr><td class="week">星期日</td><td>全部</td></tr>
+              </tbody>
+            </table>
+          </section>
+
+          <section>
+            <div class="sec-head">
+              <span class="sec-num">二</span>
+              <span class="sec-title">值日标准</span>
+              <span class="sec-shape shape-circle"></span>
+            </div>
+            <table>
+              <thead>
+                <tr><th>项目</th><th>达标要求</th><th>备注</th></tr>
+              </thead>
+              <tbody>
+                <tr><td class="week">地面</td><td>无垃圾、无明显灰尘</td><td></td></tr>
+                <tr><td class="week">垃圾</td><td>当日清空并投放</td><td></td></tr>
+                <tr><td class="week">桌面</td><td>物品摆放整齐</td><td></td></tr>
+                <tr><td class="week">卫生间</td><td>洗漱池、地面清洁无异味</td><td></td></tr>
+                <tr><td class="week">阳台 / 公共区</td><td>衣物收纳整齐、无杂物</td><td></td></tr>
+                <tr><td class="week">门窗 / 窗台</td><td>无灰尘、开关正常</td><td></td></tr>
+              </tbody>
+            </table>
+          </section>
+        </div>
+      </div>
+
+      <footer>
+        <div class="strip">
+          <span class="r"></span><span class="b"></span><span class="y"></span>
+          <span class="r"></span><span class="b"></span><span class="y"></span>
+          <span class="r"></span><span class="b"></span><span class="y"></span>
+        </div>
+        <span class="footer-note">Form follows function.</span>
+      </footer>
     </div>
   </div>
-</header>
-
-<div class="wrap">
-  <nav class="side" id="side"></nav>
-  <main>
-    <div class="chead" id="chead"></div>
-    <div class="count" id="count"></div>
-    <div id="list"></div>
-  </main>
 </div>
 
-<footer id="foot"></footer>
+<!-- ========== 模块二：电工刷题 ========== -->
+<div id="moduleB" class="module">
+  <div class="qb-head">
+    <div class="hwrap">
+      <div class="search">
+        <svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="M20 20l-4-4"/></svg>
+        <input id="q" type="text" placeholder="搜索题目 / 选项 / 考点…（如：熔断器、功率因数、工伤）">
+      </div>
+      <div class="tpills" id="tpills">
+        <button class="tpill on" data-t="all">全部</button>
+        <button class="tpill" data-t="0">判断题</button>
+        <button class="tpill" data-t="1">单选题</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="wrap">
+    <nav class="side" id="side"></nav>
+    <main>
+      <div class="chead" id="chead"></div>
+      <div class="count" id="count"></div>
+      <div id="list"></div>
+    </main>
+  </div>
+
+  <footer id="foot"></footer>
+</div>
 
 <script src="data.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/html-to-image@1.11.11/dist/html-to-image.js"></script>
 <script>
+/* ===================== 模块切换 ===================== */
+function switchMod(name){
+  document.querySelectorAll('.module').forEach(m=>m.classList.remove('on'));
+  document.getElementById(name==='roster'?'moduleR':'moduleB').classList.add('on');
+  document.querySelectorAll('#topbar .tabs button').forEach(b=>b.classList.toggle('on', b.dataset.mod===name));
+  location.hash = name;
+}
+document.querySelectorAll('#topbar .tabs button').forEach(b=>b.onclick=()=>switchMod(b.dataset.mod));
+
+/* ===================== 模块一：宿舍值日表（原功能：编辑/导出/云端同步） ===================== */
+(function(){
+  const R = document.getElementById('moduleR');
+  const KEY = 'dorm-roster-data';
+  const SUPABASE_URL = 'https://uyuhbfwqnxwzvwdvjwdl.supabase.co';
+  const SUPABASE_KEY = 'sb_publishable_BzzjxNEacZ81oJPfOHA0VA_OSzSlmhs';
+  const btn = R.querySelector('#editBtn');
+  const cells = Array.from(R.querySelectorAll('td'));
+  let editing = false;
+
+  function collect(){
+    return Array.from(R.querySelectorAll('table')).map(t=>{
+      const rows = Array.from(t.querySelectorAll('tbody tr'));
+      return rows.map(r=>Array.from(r.querySelectorAll('td')).map(td=>td.innerHTML));
+    });
+  }
+  function apply(data){
+    if(!Array.isArray(data)) return;
+    const tables = R.querySelectorAll('table');
+    data.forEach((tableData, ti)=>{
+      const tbody = tables[ti] && tables[ti].querySelector('tbody');
+      if(!tbody) return;
+      Array.from(tbody.querySelectorAll('tr')).forEach((tr, ri)=>{
+        const rowData = tableData[ri];
+        if(!rowData) return;
+        Array.from(tr.querySelectorAll('td')).forEach((td, di)=>{
+          if(rowData[di] !== undefined) td.innerHTML = rowData[di];
+        });
+      });
+    });
+  }
+  function save(){
+    const data = collect();
+    localStorage.setItem(KEY, JSON.stringify(data));
+    upload(data);
+  }
+  async function upload(data){
+    try{
+      const res = await fetch(`${SUPABASE_URL}/rest/v1/roster?id=eq.1`, {
+        method:'PATCH',
+        headers:{ 'apikey':SUPABASE_KEY, 'Authorization':`Bearer ${SUPABASE_KEY}`, 'Content-Type':'application/json', 'Prefer':'return=minimal' },
+        body: JSON.stringify({ data })
+      });
+      if(!res.ok) throw new Error('HTTP '+res.status);
+    }catch(e){ console.warn('云端保存失败（roster 表可能未创建），已保存到本地缓存。', e); }
+  }
+  async function load(){
+    try{
+      const res = await fetch(`${SUPABASE_URL}/rest/v1/roster?id=eq.1&select=data`, {
+        headers:{ 'apikey':SUPABASE_KEY, 'Authorization':`Bearer ${SUPABASE_KEY}` }
+      });
+      if(!res.ok) throw new Error('HTTP '+res.status);
+      const rows = await res.json();
+      const data = Array.isArray(rows) && rows[0] ? rows[0].data : null;
+      if(data != null){
+        apply(data);
+        localStorage.setItem(KEY, JSON.stringify(data));
+        return;
+      }
+      throw new Error('empty');
+    }catch(e){
+      console.warn('云端加载失败，回退本地缓存。', e);
+      const raw = localStorage.getItem(KEY);
+      if(!raw) return;
+      try{ apply(JSON.parse(raw)); }catch(e2){}
+    }
+  }
+  btn.addEventListener('click', ()=>{
+    editing = !editing;
+    R.classList.toggle('editing', editing);
+    btn.textContent = editing ? '退 出 编 辑' : '编 辑 模 式';
+    cells.forEach(c=>c.contentEditable = editing ? 'true' : 'false');
+    if(!editing) save();
+  });
+  R.querySelector('#exportBtn').addEventListener('click', async ()=>{
+    const page = R.querySelector('.page');
+    const wasEditing = editing;
+    if(wasEditing){
+      R.classList.remove('editing');
+      cells.forEach(c=>c.contentEditable='false');
+    }
+    try{
+      const w = page.offsetWidth, h = page.offsetHeight;
+      const scale = Math.min(6, 3307/w);
+      const dataUrl = await htmlToImage.toPng(page, {
+        width: Math.round(w*scale), height: Math.round(h*scale),
+        style:{ transform:`scale(${scale})`, transformOrigin:'top left' },
+        backgroundColor:'#ffffff'
+      });
+      const link = document.createElement('a');
+      link.download = '宿舍值日表.png';
+      link.href = dataUrl;
+      link.click();
+    }catch(e){
+      console.error('导出失败', e);
+      alert('导出失败，可改用 Ctrl+P 打印为 PDF。');
+    }finally{
+      if(wasEditing){
+        R.classList.add('editing');
+        cells.forEach(c=>c.contentEditable='true');
+      }
+    }
+  });
+  let timer;
+  document.addEventListener('input', ()=>{
+    if(!editing) return;
+    clearTimeout(timer);
+    timer = setTimeout(save, 500);
+  });
+  load();
+})();
+
+/* ===================== 模块二：电工刷题 ===================== */
 const D = window.QBANK;
 const CATS = D.cats, QS = D.qs;
-const state = { cat: -1, kw: null, type: 'all', search: '' };
+const state = { cat:-1, kw:null, type:'all', search:'' };
+const esc = s => s.replace(/[&<>"']/g, c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 
-const esc = s => s.replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
-
-/* ---------- 侧栏 ---------- */
 function renderSide(){
   const el = document.getElementById('side');
   let h = `<button class="cat ${state.cat===-1?'on':''}" data-c="-1">
@@ -136,33 +409,30 @@ function renderSide(){
   el.innerHTML = h;
   el.querySelectorAll('.cat').forEach(b=>b.onclick=()=>{
     state.cat = +b.dataset.c; state.kw = null; render();
-    document.getElementById('list').scrollIntoView({block:'start'});
   });
 }
 
-/* ---------- 章节头 ---------- */
 function renderHead(){
   const el = document.getElementById('chead');
   if(state.cat === -1){
+    el.style.borderTopColor = 'var(--ink)';
     el.innerHTML = `<h2>全部提取题目<span class="st">共 ${D.meta.extracted} 题 · 来自 6 类关键词</span></h2>
-      <div class="kwline">${CATS.map(c=>`<button class="kw" data-c="${c.id}" style="border-color:${c.accent}55"><span style="color:${c.accent};font-weight:700">${c.name}</span><span class="n">${c.total}</span></button>`).join('')}</div>`;
+      <div class="kwline">${CATS.map(c=>`<button class="kw" data-c="${c.id}" style="border-color:${c.accent}"><span style="color:${c.accent};font-weight:800">${c.name}</span><span class="n">${c.total}</span></button>`).join('')}</div>`;
     el.querySelectorAll('.kw').forEach(b=>b.onclick=()=>{state.cat=+b.dataset.c;state.kw=null;render();});
     return;
   }
   const c = CATS[state.cat];
-  el.style.borderTop = `3px solid ${c.accent}`;
+  el.style.borderTopColor = c.accent;
   el.innerHTML = `<h2><span style="color:${c.accent}">${c.name}</span><span class="st">命中 ${c.total} 题 · 判断 ${c.js} · 单选 ${c.dx}</span></h2>
     <div class="kwline">${Object.entries(c.hits).map(([k,n])=>
-      `<button class="kw ${state.kw===k?'':''}" data-k="${esc(k)}" style="${state.kw===k?`background:${c.accent};color:#fff;border-color:${c.accent}`:''}">${esc(k)}<span class="n">${n}</span></button>`).join('')}
+      `<button class="kw" data-k="${esc(k)}" style="${state.kw===k?`background:${c.accent};color:#fff;border-color:${c.accent}`:''}">${esc(k)}<span class="n">${n}</span></button>`).join('')}
     </div>`;
   el.querySelectorAll('.kw').forEach(b=>b.onclick=()=>{
     state.kw = (state.kw===b.dataset.k) ? null : b.dataset.k; render();
   });
-  if(state.cat===-1) el.style.borderTop='';
 }
 
-/* ---------- 高亮 ---------- */
-function hilite(text, cat){
+function hilite(text){
   let kws;
   if(state.cat>=0) kws = CATS[state.cat].kws;
   else kws = CATS.flatMap(c=>c.kws);
@@ -170,22 +440,20 @@ function hilite(text, cat){
   if(state.kw) kws = [state.kw, ...kws.filter(k=>k!==state.kw)];
   const escaped = esc(text);
   if(!kws.length) return escaped;
-  const accent = state.cat>=0 ? CATS[state.cat].accent : '#8A8378';
-  const tint   = state.cat>=0 ? CATS[state.cat].tint   : '#EFEDE8';
-  // 单次交替匹配（长词优先），替换不回溯，天然避免嵌套
+  const accent = state.cat>=0 ? CATS[state.cat].accent : '#141414';
+  const tint   = state.cat>=0 ? CATS[state.cat].tint   : '#EBEBEB';
   const pat = new RegExp(kws.map(k=>esc(k).replace(/[.*+?^${}()|[\]\\]/g,'\\$&')).join('|'),'g');
   return escaped.replace(pat, m=>`<mark style="background:${tint};color:${accent}">${m}</mark>`);
 }
 
-/* ---------- 卡片 ---------- */
 function card(q){
   const cat = state.cat>=0 ? CATS[state.cat] : CATS[q.c[0]];
   const kindTxt = q.k===0 ? '判断题' : '单选题';
   let h = `<div class="q" style="border-left-color:${cat.accent}">
-    <span class="tag" style="background:${cat.tint};color:${cat.accent}">[${kindTxt} · 第${q.n}题]</span><span class="t">${hilite(q.t, cat)}</span>`;
+    <span class="tag" style="background:${cat.tint};color:${cat.accent}">[${kindTxt} · 第${q.n}题]</span><span class="t">${hilite(q.t)}</span>`;
   if(q.o.length){
     h += `<div class="opts">` + q.o.map(([l,t,hit])=>
-      `<div class="opt ${hit?'hit':''}">${l}. ${hilite(t, cat)}</div>`).join('') + `</div>`;
+      `<div class="opt ${hit?'hit':''}">${l}. ${hilite(t)}</div>`).join('') + `</div>`;
   }
   h += `<div class="foot"><div class="ans">官方答案：<b>${esc(q.a)}</b></div>`;
   if(q.s) h += `<div class="sum">${esc(q.s)}</div>`;
@@ -196,7 +464,6 @@ function card(q){
   return h + `</div>`;
 }
 
-/* ---------- 过滤 ---------- */
 function current(){
   let list = QS;
   if(state.cat>=0) list = list.filter(q=>q.c.includes(state.cat));
@@ -216,10 +483,8 @@ function render(){
     `当前显示 ${list.length} 题` + (state.kw ? ` · 关键词「${state.kw}」` : '') + (state.search ? ` · 搜索「${state.search}」` : '');
   document.getElementById('list').innerHTML =
     list.length ? list.map(card).join('') : `<div class="empty">没有匹配的题目，试试更换关键词或清空搜索</div>`;
-  location.hash = `c=${state.cat}`;
 }
 
-/* ---------- 事件 ---------- */
 document.getElementById('q').addEventListener('input', e=>{ state.search = e.target.value; render(); });
 document.querySelectorAll('.tpill').forEach(b=>b.onclick=()=>{
   document.querySelectorAll('.tpill').forEach(x=>x.classList.remove('on'));
@@ -229,9 +494,11 @@ document.querySelectorAll('.tpill').forEach(b=>b.onclick=()=>{
 document.getElementById('foot').innerHTML =
   `${esc(D.meta.title)} ｜ ${esc(D.meta.src)} ｜ 仅供学习交流`;
 
-const hm = location.hash.match(/c=(-?\d+)/);
-if(hm) state.cat = Math.min(Math.max(+hm[1], -1), CATS.length-1);
 render();
+
+/* 初始模块：hash 优先，默认值日表 */
+const initMod = location.hash.replace('#','');
+if(initMod==='bank') switchMod('bank');
 </script>
 </body>
 </html>
