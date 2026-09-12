@@ -9,7 +9,7 @@
 /* ===================== 共享：调色板与模块框架 ===================== */
 :root{
   --red:#d3202e; --blue:#1f4fa3; --yellow:#f2b90f;
-  --ink:#141414; --paper:#f7f5ef; --sub:#6b6759; --line:#E2DED4;
+  --ink:#141414; --paper:#FFFFFF; --sub:#6b6b6b; --line:#EBEBEB;
 }
 *{margin:0;padding:0;box-sizing:border-box}
 body{font-family:"Montserrat","Microsoft YaHei","PingFang SC",sans-serif;background:var(--paper);color:var(--ink);font-size:15px;line-height:1.6;-webkit-print-color-adjust:exact;print-color-adjust:exact}
@@ -18,44 +18,24 @@ button{font-family:inherit;cursor:pointer;border:none;background:none;color:inhe
 .module.on{display:block}
 
 /* ---------- 顶部模块切换栏 ---------- */
-#topbar{position:fixed;top:0;left:0;right:0;z-index:100;background:rgba(247,245,239,.94);backdrop-filter:blur(8px);border-bottom:2px solid var(--ink);padding:0 20px;height:52px;display:flex;align-items:center;gap:4px}
+#topbar{position:fixed;top:0;left:0;right:0;z-index:100;background:rgba(255,255,255,.96);backdrop-filter:blur(8px);border-bottom:1px solid var(--line);padding:0 20px;height:52px;display:flex;align-items:center;gap:4px}
 #topbar .tabs{display:flex;gap:6px}
 #topbar .tabs button{font-size:13.5px;font-weight:700;letter-spacing:.12em;padding:9px 18px;color:var(--sub);border:2px solid transparent}
 #topbar .tabs button.on{color:#fff;background:var(--ink)}
 body{margin-top:52px}
 
-/* ---------- 首页：包豪斯方块入口 ---------- */
-#moduleH .home-wrap{max-width:900px;margin:0 auto;padding:56px 24px 90px}
-#moduleH .home-title{display:flex;align-items:center;justify-content:center;gap:22px;margin-bottom:44px}
-#moduleH .home-title h1{font-family:"Microsoft YaHei",sans-serif;font-size:clamp(30px,5vw,44px);font-weight:900;letter-spacing:.18em}
-#moduleH .home-geo{display:inline-block;flex:none}
-#moduleH .g-c{width:26px;height:26px;border-radius:50%;background:var(--blue)}
-#moduleH .g-t{width:0;height:0;border-left:14px solid transparent;border-right:14px solid transparent;border-bottom:24px solid var(--yellow)}
-#moduleH .home-grid{display:grid;grid-template-columns:1fr 1fr;gap:32px}
-#moduleH .hcard{position:relative;background:#fff;aspect-ratio:1/1;max-height:420px;display:flex;flex-direction:column;justify-content:center;align-items:center;gap:12px;padding:32px;text-align:center;transition:transform .18s, box-shadow .18s}
-#moduleH .hc-roster{box-shadow:10px 10px 0 var(--yellow)}
-#moduleH .hc-bank{box-shadow:10px 10px 0 var(--blue)}
-#moduleH .hc-roster:hover{transform:translate(-4px,-4px);box-shadow:16px 16px 0 var(--yellow)}
-#moduleH .hc-bank:hover{transform:translate(-4px,-4px);box-shadow:16px 16px 0 var(--blue)}
-#moduleH .hc-geo{display:flex;align-items:flex-end;gap:16px;height:44px;margin-bottom:8px}
-#moduleH .g-circle{width:34px;height:34px;border-radius:50%;background:var(--blue)}
-#moduleH .g-tri{width:0;height:0;border-left:17px solid transparent;border-right:17px solid transparent;border-bottom:30px solid var(--yellow)}
-#moduleH .g-bar{width:12px;height:44px;background:var(--red)}
-#moduleH .hc-bank .g-circle{background:var(--red)}
-#moduleH .hc-bank .g-tri{border-bottom-color:var(--blue)}
-#moduleH .hc-bank .g-bar{background:var(--yellow)}
-#moduleH .hc-name{font-family:"Microsoft YaHei",sans-serif;font-size:clamp(26px,3.4vw,36px);font-weight:900;letter-spacing:.14em}
-#moduleH .hc-sub{font-size:11px;font-weight:700;letter-spacing:.35em;color:var(--red)}
-#moduleH .hc-bank .hc-sub{color:var(--blue)}
-#moduleH .hc-desc{margin-top:6px;font-size:13px;line-height:1.9;color:var(--sub)}
-#moduleH .hc-strip{position:absolute;left:0;right:0;bottom:0;display:flex;height:10px}
-#moduleH .hc-strip span{flex:1;height:10px}
-#moduleH .hc-strip .r{background:var(--red)}
-#moduleH .hc-strip .b{background:var(--blue)}
-#moduleH .hc-strip .y{background:var(--yellow)}
+/* ---------- 首页：极简几何入口 ---------- */
+#moduleH .home-wrap{max-width:760px;margin:0 auto;padding:90px 24px 90px}
+#moduleH .home-grid{display:grid;grid-template-columns:1fr 1fr;gap:48px;max-width:560px;margin:0 auto}
+#moduleH .hcard{display:flex;flex-direction:column;align-items:center;gap:22px;padding:36px 24px;background:#fff;transition:transform .18s}
+#moduleH .hcard:hover{transform:translateY(-6px)}
+#moduleH .shape-sq{width:110px;height:110px;background:var(--red)}
+#moduleH .shape-tri{width:0;height:0;border-left:64px solid transparent;border-right:64px solid transparent;border-bottom:112px solid var(--yellow)}
+#moduleH .hc-name{font-family:"Microsoft YaHei",sans-serif;font-size:22px;font-weight:800;letter-spacing:.12em}
 @media (max-width:680px){
-  #moduleH .home-grid{grid-template-columns:1fr;gap:24px}
-  #moduleH .hcard{aspect-ratio:auto;max-height:none;padding:36px 28px 44px}
+  #moduleH .home-grid{gap:32px}
+  #moduleH .shape-sq{width:84px;height:84px}
+  #moduleH .shape-tri{border-left-width:50px;border-right-width:50px;border-bottom-width:86px}
 }
 
 /* ===================== 模块一：宿舍值日表（原样式，作用域 #moduleR） ===================== */
@@ -118,55 +98,59 @@ body{margin-top:52px}
   #moduleR .geo-tri{border-left-width:11px;border-right-width:11px;border-bottom-width:19px}
 }
 
-/* ===================== 模块二：电工刷题（统一包豪斯风格） ===================== */
-#moduleB .qb-head{position:sticky;top:52px;z-index:50;background:rgba(247,245,239,.94);backdrop-filter:blur(8px);border-bottom:1px solid var(--line)}
-#moduleB .hwrap{max-width:1180px;margin:0 auto;padding:12px 24px;display:flex;align-items:center;gap:16px;flex-wrap:wrap}
-#moduleB .search{flex:1;min-width:220px;position:relative}
-#moduleB .search input{width:100%;padding:9px 14px 9px 36px;border:none;background:#fff;font-size:14px;color:var(--ink);outline:none;font-family:inherit;box-shadow:0 0 0 1.5px var(--line)}
-#moduleB .search input:focus{box-shadow:0 0 0 1.5px var(--yellow), 4px 4px 0 var(--yellow)}
-#moduleB .search svg{position:absolute;left:11px;top:50%;transform:translateY(-50%);width:16px;height:16px;stroke:var(--sub);fill:none;stroke-width:2}
-#moduleB .tpills{display:flex;gap:6px}
-#moduleB .tpill{padding:7px 16px;font-size:13px;font-weight:700;color:var(--sub);border:none;background:#fff;letter-spacing:.05em;box-shadow:0 0 0 1.5px var(--line)}
-#moduleB .tpill.on{background:var(--ink);color:#fff;box-shadow:none}
-#moduleB .wrap{max-width:1180px;margin:0 auto;padding:26px 24px 80px;display:grid;grid-template-columns:232px 1fr;gap:28px;align-items:start}
-#moduleB .side{position:sticky;top:116px;display:flex;flex-direction:column;gap:8px}
-#moduleB .cat{display:flex;align-items:center;gap:10px;padding:11px 14px;text-align:left;border:none;background:none;transition:all .15s}
-#moduleB .cat:hover{background:#EFEBDD}
-#moduleB .cat.on{background:#fff;box-shadow:4px 4px 0 var(--yellow)}
-#moduleB .cat .dot{width:10px;height:10px;flex:none}
-#moduleB .cat .nm{font-size:14px;font-weight:700}
-#moduleB .cat .ct{margin-left:auto;font-size:12px;color:var(--sub);font-variant-numeric:tabular-nums}
-#moduleB .side .note{font-size:11px;color:var(--sub);padding:6px 4px 0;line-height:1.6}
-#moduleB .chead{background:#fff;border:none;border-top:6px solid var(--red);padding:18px 22px 16px;margin-bottom:16px}
-#moduleB .chead h2{font-family:"Microsoft YaHei",sans-serif;font-size:19px;display:flex;align-items:baseline;gap:12px;font-weight:800}
-#moduleB .chead h2 .st{font-size:12.5px;color:var(--sub);font-weight:400}
-#moduleB .kwline{display:flex;flex-wrap:wrap;gap:6px;margin-top:12px}
-#moduleB .kw{padding:4px 11px;font-size:12.5px;border:1.5px solid var(--line);background:#fff;color:var(--ink);font-weight:600}
-#moduleB .kw .n{opacity:.65;font-size:11px;margin-left:3px}
-#moduleB .q{background:#fff;border:none;border-left:6px solid var(--ink);padding:14px 18px 13px;margin-bottom:12px}
-#moduleB .q .tag{display:inline-block;font-size:11.5px;font-weight:700;padding:2px 9px;margin-right:9px;vertical-align:1px;letter-spacing:.03em}
-#moduleB .q .t{display:inline;font-weight:700;font-size:14.5px}
+/* ===================== 模块二：电工刷题 ===================== */
+#moduleB .wrap{max-width:1180px;margin:0 auto;padding:26px 24px 80px;display:grid;grid-template-columns:236px 1fr;gap:26px;align-items:start}
+#moduleB .leftcol{position:sticky;top:78px;display:flex;flex-direction:column;gap:14px}
+#moduleB .ctrl{background:#fff;border:1px solid var(--line);padding:13px}
+#moduleB .search{position:relative;margin-bottom:10px}
+#moduleB .search input{width:100%;padding:8px 12px 8px 32px;border:none;background:#F5F5F5;font-size:13px;color:var(--ink);outline:none;font-family:inherit;box-shadow:0 0 0 1px var(--line)}
+#moduleB .search input:focus{box-shadow:0 0 0 1px #C9C9C9}
+#moduleB .search svg{position:absolute;left:9px;top:50%;transform:translateY(-50%);width:14px;height:14px;stroke:var(--sub);fill:none;stroke-width:2}
+#moduleB .tpills{display:flex;gap:5px}
+#moduleB .tpill{flex:1;padding:6px 4px;font-size:12px;font-weight:700;color:var(--sub);border:none;background:#F5F5F5}
+#moduleB .tpill.on{background:var(--ink);color:#fff}
+#moduleB .side{display:flex;flex-direction:column;gap:6px}
+#moduleB .cat{display:flex;align-items:center;gap:10px;padding:10px 13px;text-align:left;border:1px solid var(--line);background:#fff;transition:background .15s}
+#moduleB .cat:hover{background:#F5F5F5}
+#moduleB .cat.on{background:#fff;font-weight:800}
+#moduleB .cat .dot{width:9px;height:9px;flex:none}
+#moduleB .cat .nm{font-size:13.5px;font-weight:600}
+#moduleB .cat .ct{margin-left:auto;font-size:11.5px;color:var(--sub);font-variant-numeric:tabular-nums}
+#moduleB .side .note{font-size:10.5px;color:var(--sub);padding:6px 4px 0;line-height:1.6}
+#moduleB .chead{background:#fff;border:none;border-top:6px solid var(--red);border-bottom:1px solid var(--line);padding:16px 20px 14px;margin-bottom:16px}
+#moduleB .chead h2{font-family:"Microsoft YaHei",sans-serif;font-size:18px;display:flex;align-items:baseline;gap:12px;font-weight:800}
+#moduleB .chead h2 .st{font-size:12px;color:var(--sub);font-weight:400}
+#moduleB .kwline{display:flex;flex-wrap:wrap;gap:6px;margin-top:10px}
+#moduleB .kw{padding:3px 10px;font-size:12px;border:1.5px solid var(--line);background:#fff;color:var(--ink);font-weight:600}
+#moduleB .kw .n{opacity:.6;font-size:10.5px;margin-left:2px}
+#moduleB .count{font-size:12px;color:var(--sub);margin:0 2px 12px}
+#moduleB #list{display:grid;grid-template-columns:repeat(2,1fr);gap:12px;align-items:stretch}
+#moduleB .q{background:#fff;border:1px solid var(--line);border-top:5px solid var(--ink);padding:14px 16px 12px;display:flex;flex-direction:column}
+#moduleB .q .tag{display:inline-block;font-size:11px;font-weight:700;padding:2px 8px;margin-right:8px;vertical-align:1px;letter-spacing:.03em}
+#moduleB .q .t{font-weight:700;font-size:14px;line-height:1.55}
 #moduleB .q mark{padding:0 2px;font-weight:800;background:none}
-#moduleB .q .opts{margin-top:9px;display:flex;flex-direction:column;gap:4px;font-size:13.5px}
-#moduleB .q .opt{padding:3px 10px;color:var(--ink)}
-#moduleB .q .opt.hit{color:#0d5c2e;font-weight:700;background:rgba(13,92,46,.08)}
+#moduleB .q .opts{margin-top:8px;display:flex;flex-direction:column;gap:4px;font-size:13px}
+#moduleB .q .opt{padding:2px 8px;color:var(--ink)}
+#moduleB .q .opt.hit{color:var(--ink);font-weight:800;background:#EFEFEF}
 #moduleB .q .opt.hit::before{content:"√ ";font-weight:800}
-#moduleB .q .foot{margin-top:9px;padding-top:8px;border-top:1px dashed var(--line);display:flex;flex-direction:column;gap:3px}
-#moduleB .q .ans{font-size:13px;color:#0d5c2e;font-weight:700}
-#moduleB .q .sum{font-size:12.5px;color:var(--sub)}
-#moduleB .q .sum::before{content:"考点速记｜";color:#9a958a}
-#moduleB .q .cats{margin-top:7px;display:flex;gap:5px;flex-wrap:wrap}
-#moduleB .q .cmini{font-size:10.5px;padding:1px 8px;color:#fff;font-weight:700;letter-spacing:.05em}
-#moduleB .empty{text-align:center;color:var(--sub);padding:70px 0;font-size:14px}
-#moduleB .count{font-size:12.5px;color:var(--sub);margin:2px 2px 12px}
+#moduleB .q .foot{margin-top:auto;padding-top:8px;border-top:1px dashed var(--line);display:flex;flex-direction:column;gap:2px}
+#moduleB .q .ans{font-size:12.5px;color:var(--ink);font-weight:800}
+#moduleB .q .sum{font-size:12px;color:var(--sub);line-height:1.55}
+#moduleB .q .sum::before{content:"考点速记｜";color:#9a9a9a}
+#moduleB .q .cats{margin-top:6px;display:flex;gap:5px;flex-wrap:wrap}
+#moduleB .q .cmini{font-size:10px;padding:1px 8px;color:#fff;font-weight:700;letter-spacing:.04em}
+#moduleB .empty{text-align:center;color:var(--sub);padding:70px 0;font-size:14px;grid-column:1/-1}
 #moduleB footer{text-align:center;color:var(--sub);font-size:11.5px;padding:26px 0 34px;border-top:1px solid var(--line);max-width:1180px;margin:0 auto}
 
+@media (max-width:960px){
+  #moduleB #list{grid-template-columns:1fr}
+}
 @media (max-width:860px){
   #moduleB .wrap{grid-template-columns:1fr;gap:16px;padding:18px 14px 60px}
-  #moduleB .side{position:static;flex-direction:row;overflow-x:auto;padding-bottom:6px}
+  #moduleB .leftcol{position:static}
+  #moduleB .side{flex-direction:row;overflow-x:auto;padding-bottom:6px}
   #moduleB .side .note{display:none}
-  #moduleB .cat{flex:none;padding:8px 12px}
-  #moduleB .hwrap{padding:12px 14px}
+  #moduleB .cat{flex:none;padding:8px 11px}
 }
 
 /* ===================== 打印 ===================== */
@@ -174,7 +158,6 @@ body{margin-top:52px}
 @media print{
   body{margin-top:0}
   #topbar{display:none}
-  #moduleB .qb-head{position:static}
   #moduleR tbody tr:hover{background:#fff}
   #moduleR .toolbar{display:none}
   #moduleR.editing td{background:#fff}
@@ -192,36 +175,17 @@ body{margin-top:52px}
   </div>
 </nav>
 
-<!-- ========== 首页：两个包豪斯方块 ========== -->
+<!-- ========== 首页：极简几何入口 ========== -->
 <div id="moduleH" class="module on">
   <div class="home-wrap">
-    <div class="home-title">
-      <span class="home-geo g-c"></span>
-      <h1>宿舍工具站</h1>
-      <span class="home-geo g-t"></span>
-    </div>
     <div class="home-grid">
-      <button class="hcard hc-roster" onclick="switchMod('roster')">
-        <div class="hc-geo">
-          <span class="g-circle"></span>
-          <span class="g-tri"></span>
-          <span class="g-bar"></span>
-        </div>
-        <div class="hc-name">宿舍值日表</div>
-        <div class="hc-sub">DORM DUTY ROSTER</div>
-        <div class="hc-desc">值日安排 · 值日标准<br>在线编辑 · 云端同步 · 导出高清图</div>
-        <div class="hc-strip"><span class="r"></span><span class="b"></span><span class="y"></span></div>
+      <button class="hcard" onclick="switchMod('roster')">
+        <span class="shape-sq"></span>
+        <span class="hc-name">宿舍值日表</span>
       </button>
-      <button class="hcard hc-bank" onclick="switchMod('bank')">
-        <div class="hc-geo">
-          <span class="g-tri"></span>
-          <span class="g-bar"></span>
-          <span class="g-circle"></span>
-        </div>
-        <div class="hc-name">电工刷题</div>
-        <div class="hc-sub">ELECTRICIAN QUIZ</div>
-        <div class="hc-desc">514 道关键词专项题<br>分类筛选 · 搜索 · 考点速记</div>
-        <div class="hc-strip"><span class="y"></span><span class="r"></span><span class="b"></span></div>
+      <button class="hcard" onclick="switchMod('bank')">
+        <span class="shape-tri"></span>
+        <span class="hc-name">电工刷题</span>
       </button>
     </div>
   </div>
@@ -309,22 +273,21 @@ body{margin-top:52px}
 
 <!-- ========== 模块二：电工刷题 ========== -->
 <div id="moduleB" class="module">
-  <div class="qb-head">
-    <div class="hwrap">
-      <div class="search">
-        <svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="M20 20l-4-4"/></svg>
-        <input id="q" type="text" placeholder="搜索题目 / 选项 / 考点…（如：熔断器、功率因数、工伤）">
-      </div>
-      <div class="tpills" id="tpills">
-        <button class="tpill on" data-t="all">全部</button>
-        <button class="tpill" data-t="0">判断题</button>
-        <button class="tpill" data-t="1">单选题</button>
-      </div>
-    </div>
-  </div>
-
   <div class="wrap">
-    <nav class="side" id="side"></nav>
+    <div class="leftcol">
+      <div class="ctrl">
+        <div class="search">
+          <svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="M20 20l-4-4"/></svg>
+          <input id="q" type="text" placeholder="搜索题目 / 考点…">
+        </div>
+        <div class="tpills" id="tpills">
+          <button class="tpill on" data-t="all">全部</button>
+          <button class="tpill" data-t="0">判断题</button>
+          <button class="tpill" data-t="1">单选题</button>
+        </div>
+      </div>
+      <nav class="side" id="side"></nav>
+    </div>
     <main>
       <div class="chead" id="chead"></div>
       <div class="count" id="count"></div>
@@ -522,7 +485,7 @@ function hilite(text){
 function card(q){
   const cat = state.cat>=0 ? CATS[state.cat] : CATS[q.c[0]];
   const kindTxt = q.k===0 ? '判断题' : '单选题';
-  let h = `<div class="q" style="border-left-color:${cat.accent}">
+  let h = `<div class="q" style="border-top-color:${cat.accent}">
     <span class="tag" style="background:${cat.tint};color:${cat.accent}">[${kindTxt} · 第${q.n}题]</span><span class="t">${hilite(q.t)}</span>`;
   if(q.o.length){
     h += `<div class="opts">` + q.o.map(([l,t,hit])=>
