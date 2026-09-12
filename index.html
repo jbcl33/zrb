@@ -9,6 +9,7 @@
 /* ===================== 共享：调色板与模块框架 ===================== */
 :root{
   --red:#d3202e; --blue:#1f4fa3; --yellow:#f2b90f;
+  --green:#20a040; --orange:#e07820; --violet:#6040c0;
   --ink:#141414; --paper:#FFFFFF; --sub:#6b6b6b; --line:#EBEBEB;
 }
 *{margin:0;padding:0;box-sizing:border-box}
@@ -40,8 +41,9 @@ body{margin-top:52px}
 @keyframes labelout{0%{opacity:0}22%{opacity:1}100%{opacity:0}}
 @media (max-width:680px){
   #moduleH .sh-red{width:48px}
-  #moduleH .sh-tri{width:56vw;height:30vh}
-  #moduleH .sh-dot{left:110px;bottom:30vh;width:36px;height:36px}
+  #moduleH .sh-tri{width:60vw;height:32vh}
+  #moduleH .sh-dot{left:104px;bottom:30vh;width:34px;height:34px}
+  #moduleH.anim-red .sh-red{width:100vw}
 }
 
 /* ---------- 转场色幕 ---------- */
@@ -113,56 +115,84 @@ body{margin-top:52px}
 /* ===================== 模块二：电工刷题 ===================== */
 #moduleB .wrap{max-width:1180px;margin:0 auto;padding:26px 24px 80px;display:grid;grid-template-columns:236px 1fr;gap:26px;align-items:start}
 #moduleB .leftcol{position:sticky;top:78px;display:flex;flex-direction:column;gap:14px}
-#moduleB .ctrl{background:#fff;border:1px solid var(--line);padding:13px}
+#moduleB .ctrl{background:transparent;border:none;padding:2px 0 8px}
 #moduleB .search{position:relative;margin-bottom:10px}
-#moduleB .search input{width:100%;padding:8px 12px 8px 32px;border:none;background:#F5F5F5;font-size:13px;color:var(--ink);outline:none;font-family:inherit;box-shadow:0 0 0 1px var(--line)}
-#moduleB .search input:focus{box-shadow:0 0 0 1px #C9C9C9}
+#moduleB .search input{width:100%;padding:8px 12px 8px 32px;border:none;background:#F5F5F5;font-size:15px;color:var(--ink);outline:none;font-family:inherit}
+#moduleB .search input:focus{background:#ECECEC}
 #moduleB .search svg{position:absolute;left:9px;top:50%;transform:translateY(-50%);width:14px;height:14px;stroke:var(--sub);fill:none;stroke-width:2}
 #moduleB .tpills{display:flex;gap:5px}
-#moduleB .tpill{flex:1;padding:6px 4px;font-size:12px;font-weight:700;color:var(--sub);border:none;background:#F5F5F5}
+#moduleB .tpill{flex:1;padding:6px 4px;font-size:13.5px;font-weight:700;color:var(--sub);border:none;background:#F5F5F5}
 #moduleB .tpill.on{background:var(--ink);color:#fff}
-#moduleB .side{display:flex;flex-direction:column;gap:6px}
-#moduleB .cat{display:flex;align-items:center;gap:10px;padding:10px 13px;text-align:left;border:1px solid var(--line);background:#fff;transition:background .15s}
-#moduleB .cat:hover{background:#F5F5F5}
-#moduleB .cat.on{background:#fff;font-weight:800}
-#moduleB .cat .dot{width:9px;height:9px;flex:none}
-#moduleB .cat .nm{font-size:13.5px;font-weight:600}
-#moduleB .cat .ct{margin-left:auto;font-size:11.5px;color:var(--sub);font-variant-numeric:tabular-nums}
-#moduleB .side .note{font-size:10.5px;color:var(--sub);padding:6px 4px 0;line-height:1.6}
-#moduleB .chead{background:#fff;border:none;border-top:6px solid var(--ink);border-bottom:1px solid var(--line);padding:16px 20px 14px;margin-bottom:16px}
-#moduleB .chead h2{font-family:"Microsoft YaHei",sans-serif;font-size:18px;display:flex;align-items:baseline;gap:12px;font-weight:800}
-#moduleB .chead h2 .st{font-size:12px;color:var(--sub);font-weight:400}
+#moduleB .side{display:flex;flex-direction:column;gap:2px}
+#moduleB .cat{display:flex;align-items:center;gap:10px;padding:8px 4px;text-align:left;border:none;background:none;cursor:pointer}
+#moduleB .cat .nm{font-size:15px;font-weight:600;color:#4a4a4a;transition:color .15s}
+#moduleB .cat:hover .nm{color:var(--ink)}
+#moduleB .cat.on .nm{font-weight:800;color:var(--ink)}
+#moduleB .cat .ct{margin-left:auto;font-size:13px;color:var(--sub);font-variant-numeric:tabular-nums}
+#moduleB .cat.all{padding:6px 4px 10px}
+#moduleB .cat.all .nm{font-size:19px;font-weight:800;color:var(--ink)}
+#moduleB .ic{width:15px;height:15px;flex:none;transition:transform .2s}
+#moduleB .ic.tri{clip-path:polygon(50% 0%,0% 100%,100% 100%)}
+#moduleB .ic.sq{border-radius:0}
+#moduleB .ic.circle{border-radius:50%}
+#moduleB .ic.reuleaux{width:17px;height:14px;clip-path:url(#reuleaux)}
+#moduleB .ic.trap{width:18px;height:13px;clip-path:polygon(18% 0%,82% 0%,100% 100%,0% 100%)}
+#moduleB .ic.ellipse{width:18px;height:12px;border-radius:50%}
+#moduleB .cat.on .ic{transform:scale(1.25)}
+#moduleB .side .note{font-size:12px;color:var(--sub);padding:10px 4px 0;line-height:1.6}
+#moduleB .chead{background:#fff;border:none;border-bottom:1px solid var(--line);padding:18px 20px 14px;margin-bottom:16px;position:relative}
+#moduleB .chead::before{content:"";position:absolute;top:0;left:0;width:56px;height:6px;background:var(--catbar,var(--ink))}
+#moduleB .chead::after{content:"";position:absolute;top:0;right:0;width:132px;height:6px;background:linear-gradient(to right,var(--yellow) 0 16.666%,var(--red) 16.666% 33.332%,var(--blue) 33.332% 50%,var(--green) 50% 66.666%,var(--orange) 66.666% 83.332%,var(--violet) 83.332% 100%)}
+#moduleB .chead h2{font-family:"Microsoft YaHei",sans-serif;font-size:21px;display:flex;align-items:baseline;gap:12px;font-weight:800}
+#moduleB .chead h2 .st{font-size:13.5px;color:var(--sub);font-weight:400}
 #moduleB .kwline{display:flex;flex-wrap:wrap;gap:6px;margin-top:10px}
-#moduleB .kw{padding:3px 10px;font-size:12px;border:1.5px solid var(--line);background:#fff;color:var(--ink);font-weight:600}
-#moduleB .kw .n{opacity:.6;font-size:10.5px;margin-left:2px}
-#moduleB .count{font-size:12px;color:var(--sub);margin:0 2px 12px}
+#moduleB .kw{padding:3px 10px;font-size:13.5px;border:1.5px solid var(--line);background:#fff;color:var(--ink);font-weight:600}
+#moduleB .kw .n{opacity:.6;font-size:12px;margin-left:2px}
+#moduleB .count{font-size:13.5px;color:var(--sub);margin:0 2px 12px}
 #moduleB #list{display:grid;grid-template-columns:repeat(2,1fr);gap:12px;align-items:stretch}
-#moduleB .q{background:#fff;border:1px solid var(--line);border-top:5px solid var(--ink);padding:14px 16px 12px;display:flex;flex-direction:column}
-#moduleB .q .tag{display:inline-block;font-size:11px;font-weight:700;padding:2px 8px;margin-right:8px;vertical-align:1px;letter-spacing:.03em}
-#moduleB .q .t{font-weight:700;font-size:14px;line-height:1.55}
+#moduleB .q{background:#fff;border:none;padding:16px 16px 14px;display:flex;flex-direction:column;position:relative}
+#moduleB .q::before{content:"";position:absolute;top:0;left:0;width:40px;height:5px;background:var(--catbar,var(--ink))}
+#moduleB .q .tag{display:inline-flex;align-items:center;gap:5px;font-size:12.5px;font-weight:700;color:var(--sub);margin-right:9px;vertical-align:middle;letter-spacing:.03em}
+#moduleB .q .kind-ic{width:10px;height:10px;background:var(--ink);flex:none}
+#moduleB .q .kind-ic.circle{border-radius:50%}
+#moduleB .q .kind-ic.tri{clip-path:polygon(50% 0%,0% 100%,100% 100%)}
+#moduleB .q .t{font-weight:700;font-size:16px;line-height:1.55}
 #moduleB .q mark{padding:0 2px;font-weight:800;background:none}
-#moduleB .q .opts{margin-top:8px;display:flex;flex-direction:column;gap:4px;font-size:13px}
+#moduleB .q .opts{margin-top:8px;display:flex;flex-direction:column;gap:4px;font-size:15px}
 #moduleB .q .opt{padding:2px 8px;color:var(--ink)}
 #moduleB .q .opt.hit{color:var(--ink);font-weight:800;background:#EFEFEF}
 #moduleB .q .opt.hit::before{content:"√ ";font-weight:800}
 #moduleB .q .foot{margin-top:auto;padding-top:8px;border-top:1px dashed var(--line);display:flex;flex-direction:column;gap:2px}
-#moduleB .q .ans{font-size:12.5px;color:var(--ink);font-weight:800}
-#moduleB .q .sum{font-size:12px;color:var(--sub);line-height:1.55}
+#moduleB .q .ans{font-size:14px;color:var(--ink);font-weight:800}
+#moduleB .q .sum{font-size:13.5px;color:var(--sub);line-height:1.55}
 #moduleB .q .sum::before{content:"考点速记｜";color:#9a9a9a}
-#moduleB .q .cats{margin-top:6px;display:flex;gap:5px;flex-wrap:wrap}
-#moduleB .q .cmini{font-size:10px;padding:1px 8px;color:#fff;font-weight:700;letter-spacing:.04em}
-#moduleB .empty{text-align:center;color:var(--sub);padding:70px 0;font-size:14px;grid-column:1/-1}
-#moduleB footer{text-align:center;color:var(--sub);font-size:11.5px;padding:26px 0 34px;border-top:1px solid var(--line);max-width:1180px;margin:0 auto}
+#moduleB .q .cats{margin-top:8px;display:flex;gap:6px;flex-wrap:wrap;align-items:center}
+#moduleB .q .cmini{display:inline-block;width:12px;height:12px;flex:none}
+#moduleB .q .cmini.tri{clip-path:polygon(50% 0%,0% 100%,100% 100%)}
+#moduleB .q .cmini.sq{border-radius:0}
+#moduleB .q .cmini.circle{border-radius:50%}
+#moduleB .q .cmini.reuleaux{width:13px;height:11px;clip-path:url(#reuleaux)}
+#moduleB .q .cmini.trap{width:14px;height:10px;clip-path:polygon(18% 0%,82% 0%,100% 100%,0% 100%)}
+#moduleB .q .cmini.ellipse{width:14px;height:9px;border-radius:50%}
+#moduleB .empty{text-align:center;color:var(--sub);padding:70px 0;font-size:15px;grid-column:1/-1}
+#moduleB footer{text-align:center;color:var(--sub);font-size:13px;padding:26px 0 34px;border-top:1px solid var(--line);max-width:1180px;margin:0 auto}
 
 @media (max-width:960px){
   #moduleB #list{grid-template-columns:1fr}
 }
 @media (max-width:860px){
-  #moduleB .wrap{grid-template-columns:1fr;gap:16px;padding:18px 14px 60px}
-  #moduleB .leftcol{position:static}
-  #moduleB .side{flex-direction:row;overflow-x:auto;padding-bottom:6px}
+  #moduleB .wrap{grid-template-columns:1fr;gap:14px;padding:16px 12px 64px}
+  #moduleB .leftcol{position:static;gap:10px}
+  #moduleB .ctrl{padding:2px 0 6px}
+  #moduleB .side{flex-direction:row;overflow-x:auto;padding-bottom:8px;-webkit-overflow-scrolling:touch;scrollbar-width:none}
+  #moduleB .side::-webkit-scrollbar{display:none}
   #moduleB .side .note{display:none}
-  #moduleB .cat{flex:none;padding:8px 11px}
+  #moduleB .cat{flex:none;padding:8px 12px}
+  #moduleB .chead{padding:16px 14px 12px;margin-bottom:12px}
+  #moduleB .chead h2{flex-wrap:wrap;gap:8px}
+  #moduleB .chead::before{width:40px;height:5px}
+  #moduleB .chead::after{width:96px;height:5px}
+  #moduleB .q{padding:14px 14px 12px}
 }
 
 /* ===================== 打印 ===================== */
@@ -280,6 +310,7 @@ body{margin-top:52px}
 
 <!-- ========== 模块二：电工刷题 ========== -->
 <div id="moduleB" class="module">
+  <svg width="0" height="0" style="position:absolute" aria-hidden="true"><defs><clipPath id="reuleaux" clipPathUnits="objectBoundingBox"><path d="M0.5,0.03 A0.82,0.82 0 0,1 0.95,0.74 A0.82,0.82 0 0,1 0.05,0.74 A0.82,0.82 0 0,1 0.5,0.03 Z"/></clipPath></defs></svg>
   <div class="wrap">
     <div class="leftcol">
       <div class="ctrl">
@@ -453,17 +484,27 @@ document.querySelectorAll('#topbar .tabs button').forEach(b=>b.onclick=()=>navTo
 /* ===================== 模块二：电工刷题 ===================== */
 const D = window.QBANK;
 const CATS = D.cats, QS = D.qs;
+const CAT_STYLE = {
+  '灯类':    { c:'var(--yellow)', shape:'tri' },
+  '元器件类': { c:'var(--red)',    shape:'sq' },
+  '理论类':   { c:'var(--blue)',   shape:'circle' },
+  '电动机类': { c:'var(--green)',  shape:'reuleaux' },
+  '材料类':   { c:'var(--orange)', shape:'trap' },
+  '法律类':   { c:'var(--violet)', shape:'ellipse' },
+};
+const catStyle = n => CAT_STYLE[n] || { c:'var(--ink)', shape:'sq' };
 const state = { cat:-1, kw:null, type:'all', search:'' };
 const esc = s => s.replace(/[&<>"']/g, c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 
 function renderSide(){
   const el = document.getElementById('side');
-  let h = `<button class="cat ${state.cat===-1?'on':''}" data-c="-1">
-      <span class="dot" style="background:var(--ink)"></span>
-      <span class="nm">全部提取题目</span><span class="ct">${D.meta.extracted}</span></button>`;
+  let h = `<button class="cat all ${state.cat===-1?'on':''}" data-c="-1">
+      <span class="ic" style="background:var(--ink)"></span>
+      <span class="nm">全部题目</span><span class="ct">${D.meta.extracted}</span></button>`;
   for(const c of CATS){
+    const s = catStyle(c.name);
     h += `<button class="cat ${state.cat===c.id?'on':''}" data-c="${c.id}">
-      <span class="dot" style="background:var(--ink)"></span>
+      <span class="ic ${s.shape}" style="background:${s.c}"></span>
       <span class="nm">${c.name}</span><span class="ct">${c.total}</span></button>`;
   }
   h += `<div class="note">自官方 ${D.meta.totalBank} 道解析题目（判断 ${D.meta.js} · 单选 ${D.meta.dx}）中按 6 组高频关键词提取，共 ${D.meta.extracted} 道（含跨类重叠）。</div>`;
@@ -475,9 +516,9 @@ function renderSide(){
 
 function renderHead(){
   const el = document.getElementById('chead');
-  el.style.borderTopColor = 'var(--ink)';
+  el.style.setProperty('--catbar', state.cat===-1 ? 'var(--ink)' : catStyle(CATS[state.cat].name).c);
   if(state.cat === -1){
-    el.innerHTML = `<h2>全部提取题目<span class="st">共 ${D.meta.extracted} 题 · 来自 6 类关键词</span></h2>
+    el.innerHTML = `<h2>全部题目<span class="st">共 ${D.meta.extracted} 题 · 来自 6 类关键词</span></h2>
       <div class="kwline">${CATS.map(c=>`<button class="kw" data-c="${c.id}"><span style="font-weight:800">${c.name}</span><span class="n">${c.total}</span></button>`).join('')}</div>`;
     el.querySelectorAll('.kw').forEach(b=>b.onclick=()=>{state.cat=+b.dataset.c;state.kw=null;render();});
     return;
@@ -507,9 +548,10 @@ function hilite(text){
 }
 
 function card(q){
-  const kindTxt = q.k===0 ? '判断题' : '单选题';
-  let h = `<div class="q" style="border-top-color:var(--ink)">
-    <span class="tag" style="background:#EFEFEF;color:var(--ink)">[${kindTxt} · 第${q.n}题]</span><span class="t">${hilite(q.t)}</span>`;
+  const kindIco = q.k===0 ? 'circle' : 'tri';
+  const bar = state.cat>=0 ? catStyle(CATS[state.cat].name).c : catStyle(CATS[q.c[0]].name).c;
+  let h = `<div class="q" style="--catbar:${bar}">
+    <span class="tag"><span class="kind-ic ${kindIco}"></span>第${q.n}题</span><span class="t">${hilite(q.t)}</span>`;
   if(q.o.length){
     h += `<div class="opts">` + q.o.map(([l,t,hit])=>
       `<div class="opt ${hit?'hit':''}">${l}. ${hilite(t)}</div>`).join('') + `</div>`;
@@ -518,7 +560,7 @@ function card(q){
   if(q.s) h += `<div class="sum">${esc(q.s)}</div>`;
   h += `</div>`;
   if(state.cat===-1 && q.c.length>1){
-    h += `<div class="cats">` + q.c.map(id=>`<span class="cmini" style="background:var(--ink)">${CATS[id].name}</span>`).join('') + `</div>`;
+    h += `<div class="cats">` + q.c.map(id=>{const s = catStyle(CATS[id].name);return `<span class="cmini ${s.shape}" style="background:${s.c}" title="${CATS[id].name}"></span>`;}).join('') + `</div>`;
   }
   return h + `</div>`;
 }
