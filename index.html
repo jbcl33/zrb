@@ -785,8 +785,8 @@ function hilite(text){
   if(state.kw) kws = [state.kw, ...kws.filter(k=>k!==state.kw)];
   const escaped = esc(text);
   if(!kws.length) return escaped;
-  const accent = '#141414';
-  const tint   = '#EBEBEB';
+  const accent = '#ffffff';
+  const tint   = '#141414';
   const pat = new RegExp(kws.map(k=>esc(k).replace(/[.*+?^${}()|[\]\\]/g,'\\$&')).join('|'),'g');
   return escaped.replace(pat, m=>`<mark style="background:${tint};color:${accent}">${m}</mark>`);
 }
