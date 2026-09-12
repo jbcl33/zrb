@@ -788,7 +788,20 @@ function hilite(text){
   const accent = '#ffffff';
   const tint   = '#141414';
   const pat = new RegExp(kws.map(k=>esc(k).replace(/[.*+?^${}()|[\]\\]/g,'\\$&')).join('|'),'g');
-  return escaped.replace(pat, m=>`<mark style="background:${tint};color:${accent}">${m}</mark>`);
+  const ms = [...escaped.matchAll(pat)].map(m=>({ s:m.index, e:m.index+m[0].length, t:m[0] }));
+  if(!ms.length) return escaped;
+  const groups = [];
+  for(const x of ms){
+    const last = groups[groups.length-1];
+    if(last && x.s === last.e){ last.e = x.e; last.t += x.t; }
+    else groups.push({ s:x.s, e:x.e, t:x.t });
+  }
+  let out = '', prev = 0;
+  for(const g of groups){
+    out += escaped.slice(prev, g.s) + `<mark style="background:${tint};color:${accent}">${g.t}</mark>`;
+    prev = g.e;
+  }
+  return out + escaped.slice(prev);
 }
 
 function card(q){
