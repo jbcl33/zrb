@@ -388,7 +388,7 @@ document.querySelectorAll('#topbar .tabs button').forEach(b=>b.onclick=()=>navTo
       parts:[['田','乚'],['一','丨','一'],['尸','巾','刂'],['日','疋','丆','贝']],
       palette:['var(--orange)','var(--blue)','var(--ink)','var(--red)','var(--green)','var(--violet)'] },
   ];
-  const GRAV = 920, REST = 0.62;
+  const GRAV = 920, REST = 0.3, SLEEP_SPEED = 16, SLEEP_FRAMES = 20;
 
   const frags = [], chars = [];
   let mode = 'scatter', assembleStart = 0, activeSet = null, activeFrags = [], assembling = false;
@@ -450,12 +450,14 @@ document.querySelectorAll('#topbar .tabs button').forEach(b=>b.onclick=()=>navTo
     const d = Math.hypot(dx, dy), rr = a.r + b.r;
     if(d > 0 && d < rr){
       const nx = dx/d, ny = dy/d, ov = rr - d;
-      const ma = a.m || 1, mb = b.m || 1, mt = ma + mb;
+      const ma = a.sleeping ? 1e9 : (a.m || 1), mb = b.sleeping ? 1e9 : (b.m || 1), mt = ma + mb;
       a.x -= nx*ov*(mb/mt); a.y -= ny*ov*(mb/mt);
       b.x += nx*ov*(ma/mt); b.y += ny*ov*(ma/mt);
       const vn = (b.vx - a.vx)*nx + (b.vy - a.vy)*ny;
       if(vn < 0){
-        const imp = -(1+REST)*vn;
+        const approach = -vn;
+        const e = approach < 60 ? 0 : REST;      // 慢速接触不反弹，快速冲击才反弹
+        const imp = -(1+e)*vn;
         a.vx -= (imp*mb/mt)*nx; a.vy -= (imp*mb/mt)*ny;
         b.vx += (imp*ma/mt)*nx; b.vy += (imp*ma/mt)*ny;
       }
@@ -470,6 +472,7 @@ document.querySelectorAll('#topbar .tabs button').forEach(b=>b.onclick=()=>navTo
       f.vx = (Math.random() - 0.5)*280;
       f.vy = (Math.random() - 0.5)*160;
       f.rot = (Math.random() - 0.5)*36;
+      f.sleeping = false; f.still = 0;
     });
     if(dot){
       dot.r = innerWidth < 680 ? 17 : 26;
@@ -477,6 +480,7 @@ document.querySelectorAll('#topbar .tabs button').forEach(b=>b.onclick=()=>navTo
       dot.y = 70 + Math.random()*60;
       dot.vx = (Math.random() - 0.5)*120;
       dot.vy = 0;
+      dot.sleeping = false; dot.still = 0;
       dot.el.style.transform = `translate(${dot.x}px,${dot.y}px) translate(-50%,-50%)`;
     }
   }
@@ -545,27 +549,51 @@ document.querySelectorAll('#topbar .tabs button').forEach(b=>b.onclick=()=>navTo
     if(f.x < f.r){ f.x = f.r; f.vx = Math.abs(f.vx)*REST; }
     if(f.x > W - f.r){ f.x = W - f.r; f.vx = -Math.abs(f.vx)*REST; }
     if(f.y < f.r){ f.y = f.r; f.vy = Math.abs(f.vy)*REST; }
-    if(f.y > Hh - f.r){ f.y = Hh - f.r; f.vy = -Math.abs(f.vy)*REST; }
+    if(f.y > Hh - f.r){ f.y = Hh - f.r; f.vy = f.vy > 80 ? -f.vy*REST : 0; }
     if(f.x < bw + f.r){ f.x = bw + f.r; if(f.vx < 0) f.vx = Math.abs(f.vx)*REST; }
     collideTri(f);
+  }
+  function settle(b){
+    const sp = Math.hypot(b.vx, b.vy);
+    if(sp < SLEEP_SPEED){
+      b.still = (b.still || 0) + 1;
+      if(b.still >= SLEEP_FRAMES){ b.vx = 0; b.vy = 0; b.sleeping = true; }
+    } else {
+      b.still = 0;
+    }
   }
   function step(now){
     const dt = Math.min(0.033, (now - last)/1000); last = now;
     const W = innerWidth, Hh = innerHeight;
-    if(dot){
-      dot.vy += GRAV*dt; dot.x += dot.vx*dt; dot.y += dot.vy*dt; applyStatic(dot, W, Hh);
+    if(dot && !dot.sleeping){
+      dot.vy += GRAV*dt; dot.x += dot.vx*dt; dot.y += dot.vy*dt;
+      dot.vx *= 0.985; dot.vy *= 0.985;
+      applyStatic(dot, W, Hh);
     }
     if(mode === 'scatter'){
-      for(const f of frags){ f.vy += GRAV*dt; f.x += f.vx*dt; f.y += f.vy*dt; applyStatic(f, W, Hh); }
+      for(const f of frags){
+        if(f.sleeping) continue;
+        f.vy += GRAV*dt; f.x += f.vx*dt; f.y += f.vy*dt;
+        f.vx *= 0.985; f.vy *= 0.985;
+        applyStatic(f, W, Hh);
+      }
       const bodies = dot ? [dot, ...frags] : frags;
       for(let i=0;i<bodies.length;i++) for(let j=i+1;j<bodies.length;j++) pair(bodies[i], bodies[j]);
+      for(const f of frags) settle(f);
+      if(dot) settle(dot);
       for(const f of frags)
         f.el.style.transform = `translate(${f.x}px,${f.y}px) translate(-50%,-50%) rotate(${f.rot}deg)`;
     } else if(mode === 'assemble'){
       const idle = frags.filter(f=>f.set.key !== activeSet);
-      for(const f of idle){ f.vy += GRAV*dt; f.x += f.vx*dt; f.y += f.vy*dt; applyStatic(f, W, Hh); }
+      for(const f of idle){
+        if(f.sleeping) continue;
+        f.vy += GRAV*dt; f.x += f.vx*dt; f.y += f.vy*dt;
+        f.vx *= 0.985; f.vy *= 0.985;
+        applyStatic(f, W, Hh);
+      }
       const bodies = dot ? [dot, ...idle] : idle;
       for(let i=0;i<bodies.length;i++) for(let j=i+1;j<bodies.length;j++) pair(bodies[i], bodies[j]);
+      for(const f of idle) settle(f);
       for(const f of idle)
         f.el.style.transform = `translate(${f.x}px,${f.y}px) translate(-50%,-50%) rotate(${f.rot}deg)`;
       const nowMs = performance.now();
