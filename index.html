@@ -442,7 +442,11 @@ document.querySelectorAll('#topbar .tabs button').forEach(b=>b.onclick=()=>navTo
       const nx = dx/d, ny = dy/d;
       f.x = cx + nx*f.r; f.y = cy + ny*f.r;
       const vn = f.vx*nx + f.vy*ny;
-      if(vn < 0){ f.vx -= (1+REST)*vn*nx; f.vy -= (1+REST)*vn*ny; }
+      if(vn < 0){
+        if(-vn > 80){ f.vx -= (1+REST)*vn*nx; f.vy -= (1+REST)*vn*ny; }  // 快速冲击才反弹
+        else { f.vx -= vn*nx; f.vy -= vn*ny; }                              // 慢速贴住不弹
+      }
+      f.vx *= 0.85; f.vy *= 0.85;                                            // 斜面摩擦，停止滑动
     }
   }
   function pair(a, b){
@@ -549,7 +553,7 @@ document.querySelectorAll('#topbar .tabs button').forEach(b=>b.onclick=()=>navTo
     if(f.x < f.r){ f.x = f.r; f.vx = Math.abs(f.vx)*REST; }
     if(f.x > W - f.r){ f.x = W - f.r; f.vx = -Math.abs(f.vx)*REST; }
     if(f.y < f.r){ f.y = f.r; f.vy = Math.abs(f.vy)*REST; }
-    if(f.y > Hh - f.r){ f.y = Hh - f.r; f.vy = f.vy > 80 ? -f.vy*REST : 0; }
+    if(f.y > Hh - f.r){ f.y = Hh - f.r; f.vy = f.vy > 80 ? -f.vy*REST : 0; f.vx *= 0.85; }
     if(f.x < bw + f.r){ f.x = bw + f.r; if(f.vx < 0) f.vx = Math.abs(f.vx)*REST; }
     collideTri(f);
   }
