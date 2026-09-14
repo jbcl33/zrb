@@ -1036,7 +1036,7 @@ cloudUpsert('wrong', window.WBANK);
         <div class="mhead-txt">
           <div class="kicker">${escN(NT.meta.kicker || 'THEORY NOTES')}</div>
           <h1>${escN(NT.meta.title || '理论笔记')}</h1>
-          <p class="desc">${escN(NT.meta.desc || '')}</p>
+          ${NT.meta.desc ? `<p class="desc">${escN(NT.meta.desc)}</p>` : ''}
         </div>
       </header>
       <div class="note-list">${
