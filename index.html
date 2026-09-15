@@ -252,6 +252,12 @@ body{margin-top:52px}
 #moduleT .article .body code{font-family:ui-monospace,Consolas,"Courier New",monospace;background:#f0f0f0;padding:1px 6px;border-radius:3px;font-size:.86em}
 #moduleT .article .body pre{margin:1.2em 0;padding:16px 18px;background:#141414;color:#e8e8e8;border-radius:6px;overflow-x:auto;font-size:13.5px;line-height:1.6}
 #moduleT .article .body pre code{background:none;padding:0;color:inherit}
+#moduleT .article .body img{max-width:100%;height:auto;display:block;margin:1.2em auto}
+#moduleT .article .body figure{margin:1.6em 0}
+#moduleT .article .body figcaption{text-align:center;color:#999;font-size:13px;margin-top:8px}
+#moduleT .article .body table{width:100%;border-collapse:collapse;margin:1.5em 0;font-size:14.5px}
+#moduleT .article .body th,#moduleT .article .body td{border:1px solid var(--line);padding:9px 12px;text-align:left;vertical-align:top}
+#moduleT .article .body th{background:#f4f6fb;color:var(--ink);font-weight:800}
 
 @media (max-width:720px){
   #moduleT .note-list{grid-template-columns:1fr}
@@ -1004,8 +1010,8 @@ wrongBtn.addEventListener('click', ()=>{
 });
 wrongBtn.textContent = '错 题 本（' + WB.meta.total + '）';
 
-/* ---- 云端同步：把题库 + 错题本写入 Supabase（与值日表 roster 同库） ----
-   页面加载时自动 upsert（id=1），失败静默——展示始终以 data.js / wrong.js 本地数据为准。 */
+/* ---- 云端同步：把题库 + 错题本 + 理论笔记写入 Supabase（与值日表 roster 同库） ----
+   页面加载时自动 upsert（id=1），失败静默——展示始终以 data.js / wrong.js / notes.js 本地数据为准。 */
 const SB_URL = 'https://uyuhbfwqnxwzvwdvjwdl.supabase.co';
 const SB_KEY = 'sb_publishable_BzzjxNEacZ81oJPfOHA0VA_OSzSlmhs';
 function cloudUpsert(table, data){
@@ -1017,6 +1023,7 @@ function cloudUpsert(table, data){
 }
 cloudUpsert('qbank', window.QBANK);
 cloudUpsert('wrong', window.WBANK);
+cloudUpsert('notes', window.NOTES);
 
 /* ===================== 模块三：理论笔记 ===================== */
 (function(){

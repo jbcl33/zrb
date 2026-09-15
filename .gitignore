@@ -6,6 +6,9 @@ captcha.json
 *.png
 *.jpg
 
+# ===== 站点静态资源（笔记插图，勿忽略） =====
+!notes-encoder.png
+
 # ===== 平台抓取的临时 HTML 缓存 =====
 _*.html
 wronglog.html
