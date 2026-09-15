@@ -22,35 +22,8 @@ window.NOTES = {
       date: '2026-09-14',
       tag: '编码 · 传感器',
       color: 'var(--blue)',
-      excerpt: '旋转编码器把机械角度翻译成数字代码：绝对式给每个位置一个唯一编码（格雷码），增量式靠 A/B 正交脉冲计数；格雷码让相邻位置只变 1 位，避免切换瞬间读错。',
-      body: [
-        '<p><strong>一句话核心：</strong>旋转编码器把「机械角度」翻译成「数字代码」。绝对式给每个角度位置一个唯一编码（重点用<strong>格雷码</strong>），增量式则靠 A/B 正交脉冲的数量与相位计算运动。</p>',
-        '<figure><img src="notes-encoder.png" alt="编码器视觉笔记原图"><figcaption>▲ 编码器视觉笔记：左—编码盘 · 右—光学链路 · 下—A/B 脉冲</figcaption></figure>',
-        '<h2>一、四层结构（从「转」到「数」）</h2>',
-        '<ul><li><strong>机械运动</strong>：电机轴 / 转轴发生旋转。</li><li><strong>光学读取</strong>：LED 发光 → 透镜/狭缝 → 编码盘 → 光电传感器判断某轨道「亮 / 暗」。</li><li><strong>数字编码</strong>：多路 0/1；绝对式多条同心轨道构成位置码，重点是<strong>格雷码 Gray Code</strong>。</li><li><strong>数字处理</strong>：格雷码 → 普通二进制 → PLC / 驱动器解释成角度、位置。</li></ul>',
-        '<blockquote>记忆链条：机械角度 → 光学状态 → 电信号 0/1 → 编码 → 控制器解释 → 角度 / 位置</blockquote>',
-        '<h2>二、绝对式编码器</h2>',
-        '<p>核心特点：<strong>每个角度位置，都对应一个确定的数字编码</strong>。4 条轨道 → 2⁴ = 16 个状态；轨道越多，可区分的位置越多、分辨率越高。</p>',
-        '<p>最大优点：<strong>断电后仍能直接读到当前位置</strong>，不必从零重新累计脉冲。</p>',
-        '<h2>三、为什么用格雷码，而不是普通二进制？</h2>',
-        '<p>普通二进制在跳变时会<strong>同时改多位</strong>：如 0111 → 1000（4 位全变）。机械码盘切换瞬间各轨道不可能绝对同步，会短暂读到 0000 / 1111 等错误中间值，转速越快越明显。</p>',
-        '<p><strong>格雷码</strong>的核心：<strong>相邻码之间只改变 1 位</strong>，大幅降低边界读取错误。</p>',
-        '<pre>3 位格雷码：000 → 001 → 011 → 010 → 110 → 111 → 101 → 100 → 000</pre>',
-        '<h2>四、格雷码 → 二进制（XOR 转换）</h2>',
-        '<p>最高位照抄，其余每一位 = 上一位二进制 XOR 当前位格雷码：</p>',
-        '<pre>B3 = G3\nB2 = B3 XOR G2\nB1 = B2 XOR G1\nB0 = B1 XOR G0</pre>',
-        '<p>例：格雷码 <strong>1011</strong> → 二进制 <strong>1101</strong> → 十进制 <strong>13</strong>。</p>',
-        '<h2>五、增量式编码器</h2>',
-        '<p>思路不同：不给每个位置唯一编号，而是产生<strong>连续脉冲</strong>，靠脉冲数量与相位关系计算运动。</p>',
-        '<ul><li><strong>A、B 两路</strong>相差约 90°（正交 Quadrature）：谁领先 → 判方向；数脉冲 / 边沿 → 算位移。</li><li>正转 00 → 01 → 11 → 10 → 00；反转 00 → 10 → 11 → 01 → 00。</li></ul>',
-        '<h2>六、绝对式 vs 增量式（速查）</h2>',
-        '<table><thead><tr><th>项目</th><th>绝对式</th><th>增量式</th></tr></thead><tbody><tr><td>位置表示</td><td>每个位置有唯一编码</td><td>靠脉冲累计</td></tr><tr><td>主要输出</td><td>多位代码（Gray Code）</td><td>A/B 脉冲（可有 Z 相）</td></tr><tr><td>断电定位</td><td>可直接读当前位置</td><td>仅靠脉冲无法知道累计位置</td></tr><tr><td>主要优势</td><td>不依赖从零累计</td><td>结构 / 接口较简单</td></tr><tr><td>主要风险</td><td>码盘 / 读取通道复杂</td><td>掉电或丢脉冲 → 累计误差</td></tr></tbody></table>',
-        '<h2>七、易混三点</h2>',
-        '<ul><li>格雷码是「编码规则」，不是另一种电压。</li><li>增量式不是靠 Gray Code 表示绝对角度。</li><li>「光 → 格雷码 → 二进制」不是唯一硬件路径：格雷码图案可直接印在码盘上。</li></ul>',
-        '<blockquote><strong>一句自动化语言：</strong>绝对式光学编码器 = 一台把机械角度翻译成数字代码的机器；增量式 = 用周期性 A/B 脉冲的数量与相位判断运动量与方向。</blockquote>',
-        '<h2>附：速查公式</h2>',
-        '<ul><li>n 位绝对编码理论状态数 = <strong>2ⁿ</strong></li><li>Gray → Binary：Bi = B(i+1) XOR Gi（最高位 Bn = Gn）</li><li>格雷码核心：相邻只变 <strong>1 bit</strong></li><li>1 Byte = 8 bit；0/1 对应两种逻辑状态</li></ul>'
-      ].join('')
+      excerpt: '',
+      body: '<img src="notes-encoder.png" alt="编码器视觉笔记原图">'
     }
   ]
 };
