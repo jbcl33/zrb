@@ -15,6 +15,8 @@
 *{margin:0;padding:0;box-sizing:border-box}
 body{font-family:"Montserrat","Microsoft YaHei","PingFang SC",sans-serif;background:var(--paper);color:var(--ink);font-size:15px;line-height:1.6;-webkit-print-color-adjust:exact;print-color-adjust:exact}
 button{font-family:inherit;cursor:pointer;border:none;background:none;color:inherit}
+html{-webkit-tap-highlight-color:transparent}
+button,a,input,textarea,select{touch-action:manipulation}
 .module{display:none}
 .module.on{display:block}
 
@@ -258,12 +260,92 @@ body{margin-top:52px}
 #moduleT .article .body table{width:100%;border-collapse:collapse;margin:1.5em 0;font-size:14.5px}
 #moduleT .article .body th,#moduleT .article .body td{border:1px solid var(--line);padding:9px 12px;text-align:left;vertical-align:top}
 #moduleT .article .body th{background:#f4f6fb;color:var(--ink);font-weight:800}
+/* 紧凑小表（参考宿舍值日表风格）：格雷码对照表用 */
+#moduleT .article .body table.code-mini{width:100%;margin:1.2em 0;border-collapse:collapse;font-size:13px}
+#moduleT .article .body table.code-mini th{background:var(--ink);color:#fff;font-weight:700;font-size:12.5px;letter-spacing:.12em;text-align:center;padding:5px 16px;border:none}
+#moduleT .article .body table.code-mini td{border:none;padding:2px 16px;text-align:center;font-variant-numeric:tabular-nums;font-weight:500}
+#moduleT .article .body table.code-mini tbody tr{background:#fff;transition:background .15s}
+#moduleT .article .body table.code-mini tbody tr:hover{background:#f3f0e6}
+
+/* ===================== 理论笔记：文章编辑器 ===================== */
+#noteEditor{position:fixed;top:0;left:0;right:0;bottom:0;background:#fff;z-index:999;display:none;flex-direction:column;font-family:"Microsoft YaHei","PingFang SC",sans-serif}
+#noteEditor.on{display:flex}
+#noteEditor .ed-bar{display:flex;align-items:center;justify-content:space-between;padding:13px 24px;border-bottom:1px solid var(--line);flex:none}
+#noteEditor .ed-bar .ed-title{font-size:15px;font-weight:800;color:var(--ink)}
+#noteEditor .ed-bar .ed-close{border:none;background:none;font-size:28px;line-height:1;color:var(--sub);cursor:pointer;padding:0 4px}
+#noteEditor .ed-bar .ed-close:hover{color:var(--red)}
+#noteEditor .ed-fields{display:flex;flex-wrap:wrap;gap:14px 18px;align-items:flex-end;padding:14px 24px;border-bottom:1px solid var(--line);flex:none}
+#noteEditor .ed-fields .f{display:flex;flex-direction:column;gap:6px}
+#noteEditor .ed-fields .f label{font-size:12px;font-weight:700;letter-spacing:.05em;color:var(--sub)}
+#noteEditor .ed-fields .f input[type=text]{border:1px solid var(--line);padding:8px 12px;font-size:14px;border-radius:4px;background:#fff}
+#noteEditor .ed-fields .f input[type=text]:focus{outline:none;border-color:var(--blue)}
+#noteEditor .ed-fields .f.f-title{flex:1 1 280px}
+#noteEditor .ed-fields .f.f-title input{width:100%}
+#noteEditor .ed-swatches{display:flex;gap:8px}
+#noteEditor .ed-swatches .sw{width:22px;height:22px;border-radius:50%;cursor:pointer;border:2px solid transparent}
+#noteEditor .ed-swatches .sw.on{border-color:var(--ink)}
+#noteEditor .ed-body{flex:1;overflow:auto;padding:16px 24px 40px;background:#fff}
+#noteEditor .ed-actions{display:flex;gap:10px;justify-content:flex-end;padding:13px 24px;border-top:1px solid var(--line);flex:none;background:#fff}
+#noteEditor .ed-actions button{border:none;padding:10px 18px;font-size:14px;font-weight:800;letter-spacing:.05em;border-radius:4px;cursor:pointer}
+#noteEditor .ed-actions button:hover{opacity:.88}
+#noteEditor .ed-actions .b-preview{background:var(--blue);color:#fff}
+#noteEditor .ed-actions .b-download{background:var(--green);color:#fff}
+#noteEditor .ed-actions .b-copy{background:var(--ink);color:#fff}
+#noteEditor .ed-actions .b-cancel{background:transparent;color:var(--sub);border:1px solid var(--line)}
+#moduleT .mhead .ed-new{margin-left:auto;align-self:center;border:none;background:var(--ink);color:#fff;font-size:13.5px;font-weight:800;letter-spacing:.06em;padding:11px 18px;border-radius:4px;cursor:pointer;flex:none}
+#moduleT .mhead .ed-new:hover{background:var(--blue)}
+#moduleT .article .article-top{display:flex;align-items:center;justify-content:space-between;margin-bottom:22px}
+#moduleT .article .article-top .back{margin-bottom:0}
+#moduleT .article .article-top .edit-btn{border:1px solid var(--line);background:none;color:var(--sub);font-size:12.5px;font-weight:700;letter-spacing:.06em;padding:6px 14px;border-radius:4px;cursor:pointer}
+#moduleT .article .article-top .edit-btn:hover{color:var(--ink);border-color:var(--ink)}
 
 @media (max-width:720px){
   #moduleT .note-list{grid-template-columns:1fr}
   #moduleT .mhead{flex-direction:column;gap:18px}
   #moduleT .mhead-geo{flex-direction:row;gap:12px}
   #moduleT .mhead-geo .g-bar{width:58px;height:10px}
+}
+
+/* ===================== 手机端优化 ===================== */
+@media (max-width:680px){
+  /* iOS：输入框字体 ≥16px，聚焦时不自动放大页面 */
+  #moduleB .search input{font-size:16px}
+  #noteEditor .ed-fields input[type=text]{font-size:16px}
+
+  /* 顶栏：触控目标 ≥44px */
+  #topbar{padding:0 12px}
+  #topbar .tabs{gap:4px}
+  #topbar .tabs button{width:44px;height:44px}
+  #topbar .ic-dot{width:16px;height:16px}
+  #topbar .ic-sq{width:18px;height:18px}
+  #topbar .ic-tri{border-left-width:12px;border-right-width:12px;border-bottom-width:21px}
+  #topbar .ic-circle{width:17px;height:17px}
+
+  /* 电工刷题：更大触控目标 + 更好可读性 */
+  #moduleB .wrap{padding:14px 12px 64px}
+  #moduleB .search input{padding:11px 12px 11px 34px}
+  #moduleB .search svg{left:11px}
+  #moduleB .tpill{padding:10px 4px;font-size:14px}
+  #moduleB .wrongbtn{padding:11px 6px;font-size:14px}
+  #moduleB .cat{padding:11px 14px}
+  #moduleB .cat .nm{font-size:15.5px}
+  #moduleB .cat .ct{font-size:13.5px}
+  #moduleB .kw{padding:7px 12px;font-size:14px}
+  #moduleB .q .t{font-size:16.5px}
+  #moduleB .q .opts{gap:6px}
+  #moduleB .q .opt{padding:3px 8px}
+  #moduleB .count{font-size:14px}
+  #moduleB footer{font-size:12.5px}
+
+  /* 理论笔记：写文章按钮 + 编辑器适配小屏 */
+  #moduleT .mhead .ed-new{margin-left:0;align-self:stretch;text-align:center}
+  #moduleT .article .article-top .edit-btn{padding:9px 16px;font-size:13.5px}
+  #noteEditor .ed-bar{padding:12px 14px}
+  #noteEditor .ed-fields{padding:12px 14px;gap:12px}
+  #noteEditor .ed-fields .f.f-title{flex:1 1 100%}
+  #noteEditor .ed-body{padding:12px 14px 32px}
+  #noteEditor .ed-actions{flex-wrap:wrap;padding:11px 14px;gap:8px}
+  #noteEditor .ed-actions button{flex:1 1 40%;padding:12px 8px;font-size:13.5px}
 }
 
 /* ===================== 打印 ===================== */
@@ -416,10 +498,41 @@ body{margin-top:52px}
   <div class="wrap"></div>
 </div>
 
+<!-- ========== 理论笔记：全屏文章编辑器 ========== -->
+<div id="noteEditor">
+  <div class="ed-bar">
+    <span class="ed-title">写文章</span>
+    <button class="ed-close" id="edClose" aria-label="关闭">×</button>
+  </div>
+  <div class="ed-fields">
+    <div class="f f-title"><label>标题</label><input type="text" id="edTitle" placeholder="文章标题"></div>
+    <div class="f"><label>标签</label><input type="text" id="edTag" placeholder="如：编码 · 传感器"></div>
+    <div class="f"><label>颜色</label>
+      <div class="ed-swatches" id="edSwatches">
+        <span class="sw" data-color="blue" style="background:#1f4fa3"></span>
+        <span class="sw" data-color="red" style="background:#d3202e"></span>
+        <span class="sw" data-color="yellow" style="background:#f2b90f"></span>
+        <span class="sw" data-color="green" style="background:#20a040"></span>
+        <span class="sw" data-color="orange" style="background:#e07820"></span>
+        <span class="sw" data-color="violet" style="background:#6040c0"></span>
+      </div>
+    </div>
+    <div class="f"><label>日期</label><input type="text" id="edDate" readonly></div>
+  </div>
+  <div class="ed-body"><textarea id="edBody"></textarea></div>
+  <div class="ed-actions">
+    <button class="b-cancel" id="edCancel">关闭</button>
+    <button class="b-copy" id="edCopy">复制正文 HTML</button>
+    <button class="b-download" id="edDownload">下载 HTML</button>
+    <button class="b-preview" id="edPreview">预览</button>
+  </div>
+</div>
+
 <script src="data.js"></script>
 <script src="wrong.js"></script>
 <script src="notes.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/html-to-image@1.11.11/dist/html-to-image.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/tinymce/5.10.9/tinymce.min.js" onerror="var s=document.createElement('script');s.src='https://cdn.jsdelivr.net/npm/tinymce@5.10.9/tinymce.min.js';document.head.appendChild(s);"></script>
 <script>
 /* ===================== 模块切换 ===================== */
 const MOD_IDS = { home:'moduleH', roster:'moduleR', bank:'moduleB', notes:'moduleT' };
@@ -1034,7 +1147,129 @@ cloudUpsert('notes', window.NOTES);
   const shp = color => `<span class="shp" style="background:${color||'var(--blue)'}"></span>`;
   let cur = null;
 
+  // ---------- 文章编辑器 ----------
+  const ed = document.getElementById('noteEditor');
+  const edBarTitle = ed.querySelector('.ed-title');
+  const edTitle = ed.querySelector('#edTitle');
+  const edTag = ed.querySelector('#edTag');
+  const edDate = ed.querySelector('#edDate');
+  const edSwatches = Array.from(ed.querySelectorAll('.ed-swatches .sw'));
+  const edBody = ed.querySelector('#edBody');
+  const edCloseBtn = ed.querySelector('#edClose');
+  const edCancelBtn = ed.querySelector('#edCancel');
+  const edPreviewBtn = ed.querySelector('#edPreview');
+  const edDownloadBtn = ed.querySelector('#edDownload');
+  const edCopyBtn = ed.querySelector('#edCopy');
+
+  let edColorKey = 'blue';
+  let edTiny = null;
+  let edPending = null;
+
+  const todayStr = ()=>{ const d=new Date(); return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0'); };
+  const colorFromNote = c => { const m=/var\(--(\w+)\)/.exec(c||''); return m?m[1]:'blue'; };
+  const colorVal = k => 'var(--'+k+')';
+  const edGetBody = ()=> (edTiny ? edTiny.getContent() : (edBody.value||''));
+
+  function edInit(){
+    if(edTiny || !window.tinymce) return;
+    window.tinymce.init({
+      selector: '#edBody',
+      plugins: 'lists link image table code autoresize textcolor',
+      toolbar: 'undo redo | formatselect | bold italic underline strikethrough | forecolor backcolor | fontsizeselect fontselect | alignleft aligncenter alignright alignjustify | bullist numlist outdent indent | blockquote table | link image | removeformat | code',
+      menubar: false,
+      statusbar: false,
+      branding: false,
+      promotion: false,
+      height: 560,
+      min_height: 560,
+      autoresize_bottom_margin: 40,
+      font_formats: '微软雅黑=Microsoft YaHei;宋体=SimSun;黑体=SimHei;楷体=KaiTi;等线=DengXian;Arial=Arial',
+      fontsize_formats: '12px 14px 16px 18px 20px 24px 28px 32px 36px 48px',
+      content_style: 'body{font-family:Microsoft YaHei,PingFang SC,sans-serif;font-size:16.5px;line-height:1.95;color:#2a2a2a;padding:12px 16px} h1{font-size:30px;font-weight:900;color:#141414} h2{font-size:22px;font-weight:800;color:#141414;margin:1.4em 0 .6em;padding-left:14px;border-left:4px solid #1f4fa3;line-height:1.35} h3{font-size:18px;font-weight:800;color:#141414} p{margin:0 0 1em} ul,ol{padding-left:1.6em} li{margin:.4em 0} blockquote{margin:1.2em 0;padding:12px 18px;background:#f4f6fb;border-left:4px solid #1f4fa3;color:#333} pre{margin:1em 0;padding:14px 16px;background:#141414;color:#e8e8e8;border-radius:6px;font-size:13.5px;overflow-x:auto} code{font-family:ui-monospace,Consolas,monospace;background:#f0f0f0;padding:1px 6px;border-radius:3px} img{max-width:100%;height:auto} table{border-collapse:collapse;width:100%} th,td{border:1px solid #ebebeb;padding:8px 11px} th{background:#f4f6fb;color:#141414} figure{margin:1.4em 0} figcaption{text-align:center;color:#999;font-size:13px}',
+      images_upload_handler: function(blobInfo, success){
+        const r = new FileReader();
+        r.onload = ()=> success(r.result);
+        r.onerror = ()=> success('');
+        r.readAsDataURL(blobInfo.blob());
+      },
+      setup: function(editor){
+        editor.on('init', function(){
+          edTiny = editor;
+          if(edPending != null){ editor.setContent(edPending); edPending = null; }
+        });
+      }
+    });
+  }
+
+  function openEditor(n){
+    edBarTitle.textContent = n ? '编辑文章' : '写文章';
+    edTitle.value = n ? (n.title||'') : '';
+    edTag.value = n ? (n.tag||'') : '';
+    edDate.value = n ? (n.date||'') : todayStr();
+    edColorKey = n ? colorFromNote(n.color) : 'blue';
+    edSwatches.forEach(sw=>sw.classList.toggle('on', sw.dataset.color===edColorKey));
+    const body = n ? (n.body||'') : '';
+    ed.classList.add('on');
+    edInit();
+    if(edTiny){ edTiny.setContent(body); }
+    else if(window.tinymce){ edPending = body; }
+    else { edBody.value = body; }
+    window.scrollTo(0,0);
+  }
+
+  function edClose(){
+    ed.classList.remove('on');
+    if(cur != null) open(cur); else listView();
+  }
+
+  function edPreview(){
+    const n = {
+      title: edTitle.value.trim() || '未命名文章',
+      tag: edTag.value.trim() || '',
+      color: colorVal(edColorKey),
+      date: edDate.value.trim() || todayStr(),
+      body: edGetBody()
+    };
+    ed.classList.remove('on');
+    renderArticle(n, ()=>{ ed.classList.add('on'); window.scrollTo(0,0); }, '← 返回编辑');
+  }
+
+  function edDownload(){
+    const rawTitle = edTitle.value.trim() || '未命名文章';
+    const escTitle = escN(rawTitle);
+    const fname = (rawTitle.replace(/[\\/:*?"<>|]/g,'_').slice(0,60)) || '未命名文章';
+    const html = '<!doctype html><html lang="zh-CN"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>'+escTitle+'</title><style>body{max-width:720px;margin:0 auto;padding:44px 24px;font-family:"Microsoft YaHei","PingFang SC",sans-serif;color:#2a2a2a;line-height:1.95;font-size:16.5px}h1{font-size:32px;font-weight:900;color:#141414;margin:0 0 26px}h2{font-size:22px;font-weight:800;color:#141414;margin:1.6em 0 .7em;padding-left:14px;border-left:4px solid #1f4fa3}h3{font-size:18px;font-weight:800;color:#141414}p{margin:0 0 1.15em}ul,ol{padding-left:1.6em}li{margin:.42em 0}blockquote{margin:1.4em 0;padding:14px 20px;background:#f4f6fb;border-left:4px solid #1f4fa3;color:#333}pre{margin:1.2em 0;padding:16px 18px;background:#141414;color:#e8e8e8;border-radius:6px;overflow-x:auto;font-size:13.5px}code{font-family:ui-monospace,Consolas,monospace;background:#f0f0f0;padding:1px 6px;border-radius:3px}img{max-width:100%;height:auto;display:block;margin:1.2em auto}table{border-collapse:collapse;width:100%;margin:1.5em 0}th,td{border:1px solid #ebebeb;padding:9px 12px;text-align:left}th{background:#f4f6fb;color:#141414}figure{margin:1.6em 0}figcaption{text-align:center;color:#999;font-size:13px;margin-top:8px}</style></head><body><h1>'+escTitle+'</h1>'+edGetBody()+'</body></html>';
+    const blob = new Blob([html], {type:'text/html;charset=utf-8'});
+    const a = document.createElement('a');
+    a.href = URL.createObjectURL(blob);
+    a.download = fname + '.html';
+    document.body.appendChild(a); a.click(); a.remove();
+    setTimeout(()=>URL.revokeObjectURL(a.href), 1500);
+  }
+
+  function copyText(text){
+    if(navigator.clipboard && navigator.clipboard.writeText) return navigator.clipboard.writeText(text);
+    return new Promise((res,rej)=>{
+      const ta = document.createElement('textarea');
+      ta.value = text; ta.style.position='fixed'; ta.style.left='-9999px';
+      document.body.appendChild(ta); ta.focus(); ta.select();
+      try{ document.execCommand('copy'); res(); }catch(e){ rej(e); }
+      ta.remove();
+    });
+  }
+
+  function edCopy(){
+    const body = edGetBody();
+    if(!body.trim()){ alert('正文还是空的，先写点内容吧。'); return; }
+    copyText(body).then(()=>{
+      const old = edCopyBtn.textContent; edCopyBtn.textContent = '✓ 已复制';
+      setTimeout(()=>{ edCopyBtn.textContent = old; }, 1400);
+    }).catch(()=>alert('复制失败，请手动全选复制正文。'));
+  }
+
+  // ---------- 视图 ----------
   function listView(){
+    cur = null;
     wrap.innerHTML = `
       <header class="mhead">
         <div class="mhead-geo">
@@ -1045,6 +1280,7 @@ cloudUpsert('notes', window.NOTES);
           <h1>${escN(NT.meta.title || '理论笔记')}</h1>
           ${NT.meta.desc ? `<p class="desc">${escN(NT.meta.desc)}</p>` : ''}
         </div>
+        <button class="ed-new" id="edNewBtn">＋ 写文章</button>
       </header>
       <div class="note-list">${
         NT.notes.length
@@ -1056,18 +1292,20 @@ cloudUpsert('notes', window.NOTES);
             <p class="nexc">${escN(n.excerpt)}</p>
             <div class="more">阅读全文 →</div>
           </div>`).join('')
-        : `<div class="note-empty">还没有笔记 —— 打开 notes.js 添加你的第一篇</div>`
+        : `<div class="note-empty">还没有笔记 —— 点右上「＋ 写文章」开始</div>`
       }</div>`;
     wrap.querySelectorAll('.note-card').forEach(c=>c.onclick=()=>open(+c.dataset.id));
+    const nb = wrap.querySelector('#edNewBtn');
+    if(nb) nb.onclick = ()=>openEditor(null);
   }
 
-  function open(id){
-    const n = NT.notes.find(x=>x.id===id);
-    if(!n) return;
-    cur = id;
+  function renderArticle(n, backFn, backLabel){
     wrap.innerHTML = `
       <article class="article">
-        <button class="back">← 全部笔记</button>
+        <div class="article-top">
+          <button class="back">${backLabel || '← 全部笔记'}</button>
+          <button class="edit-btn">编辑</button>
+        </div>
         <header class="ahead">
           <div class="ntag">${shp(n.color)}${escN(n.tag)}</div>
           <h1>${escN(n.title)}</h1>
@@ -1075,9 +1313,25 @@ cloudUpsert('notes', window.NOTES);
         </header>
         <div class="body">${n.body || ''}</div>
       </article>`;
-    wrap.querySelector('.back').onclick = ()=>{ cur = null; listView(); window.scrollTo(0,0); };
+    wrap.querySelector('.back').onclick = backFn;
+    wrap.querySelector('.edit-btn').onclick = ()=>openEditor(n);
     window.scrollTo(0,0);
   }
+
+  function open(id){
+    const n = NT.notes.find(x=>x.id===id);
+    if(!n) return;
+    cur = id;
+    renderArticle(n, ()=>{ listView(); });
+  }
+
+  // ---------- 编辑器事件 ----------
+  edCloseBtn.onclick = edClose;
+  edCancelBtn.onclick = edClose;
+  edPreviewBtn.onclick = edPreview;
+  edDownloadBtn.onclick = edDownload;
+  edCopyBtn.onclick = edCopy;
+  edSwatches.forEach(sw=>sw.onclick = ()=>{ edColorKey = sw.dataset.color; edSwatches.forEach(x=>x.classList.toggle('on', x===sw)); });
 
   listView();
 })();
