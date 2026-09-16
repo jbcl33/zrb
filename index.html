@@ -292,12 +292,17 @@ body{margin-top:52px}
 #noteEditor .ed-actions .b-download{background:var(--green);color:#fff}
 #noteEditor .ed-actions .b-copy{background:var(--ink);color:#fff}
 #noteEditor .ed-actions .b-cancel{background:transparent;color:var(--sub);border:1px solid var(--line)}
-#moduleT .mhead .ed-new{margin-left:auto;align-self:center;border:none;background:var(--ink);color:#fff;font-size:13.5px;font-weight:800;letter-spacing:.06em;padding:11px 18px;border-radius:4px;cursor:pointer;flex:none}
-#moduleT .mhead .ed-new:hover{background:var(--blue)}
+/* 十字「写文章 / 编辑」按钮：黑色 + 号，点击转一圈 */
+#moduleT .ed-cross{position:relative;width:44px;height:44px;display:inline-flex;align-items:center;justify-content:center;background:none;border:none;cursor:pointer;padding:0;flex:none}
+#moduleT .ed-cross::before,#moduleT .ed-cross::after{content:"";position:absolute;background:var(--ink);transition:background .15s}
+#moduleT .ed-cross::before{width:22px;height:2px}
+#moduleT .ed-cross::after{width:2px;height:22px}
+#moduleT .ed-cross:hover::before,#moduleT .ed-cross:hover::after{background:var(--blue)}
+#moduleT .ed-cross.spin{animation:crossSpin .5s cubic-bezier(.7,0,.3,1)}
+@keyframes crossSpin{to{transform:rotate(360deg)}}
+#moduleT .mhead .ed-cross{margin-left:auto}
 #moduleT .article .article-top{display:flex;align-items:center;justify-content:space-between;margin-bottom:22px}
 #moduleT .article .article-top .back{margin-bottom:0}
-#moduleT .article .article-top .edit-btn{border:1px solid var(--line);background:none;color:var(--sub);font-size:12.5px;font-weight:700;letter-spacing:.06em;padding:6px 14px;border-radius:4px;cursor:pointer}
-#moduleT .article .article-top .edit-btn:hover{color:var(--ink);border-color:var(--ink)}
 
 @media (max-width:720px){
   #moduleT .note-list{grid-template-columns:1fr}
@@ -337,9 +342,7 @@ body{margin-top:52px}
   #moduleB .count{font-size:14px}
   #moduleB footer{font-size:12.5px}
 
-  /* 理论笔记：写文章按钮 + 编辑器适配小屏 */
-  #moduleT .mhead .ed-new{margin-left:0;align-self:stretch;text-align:center}
-  #moduleT .article .article-top .edit-btn{padding:9px 16px;font-size:13.5px}
+  /* 理论笔记：编辑器适配小屏 */
   #noteEditor .ed-bar{padding:12px 14px}
   #noteEditor .ed-fields{padding:12px 14px;gap:12px}
   #noteEditor .ed-fields .f.f-title{flex:1 1 100%}
@@ -617,23 +620,32 @@ document.querySelectorAll('#topbar .tabs button').forEach(b=>b.onclick=()=>navTo
 
   function collideTri(f){
     const W = innerWidth, Hh = innerHeight;
-    const Tx = W, Ty = 0.64*Hh, Bx = 0.60*W, By = Hh;
+    // 三角形实际几何（与 CSS 一致）：桌面 40vw×36vh，手机 60vw×32vh
+    const leftX = innerWidth < 680 ? 0.40*W : 0.60*W;
+    const topY  = innerWidth < 680 ? 0.68*Hh : 0.64*Hh;
+    const Tx = W, Ty = topY, Bx = leftX, By = Hh;
     const ex = Bx - Tx, ey = By - Ty;
-    const denom = ex*ex + ey*ey || 1;
-    const t = Math.max(0, Math.min(1, ((f.x - Tx)*ex + (f.y - Ty)*ey)/denom));
+    const len2 = ex*ex + ey*ey || 1;
+    const len = Math.sqrt(len2);
+    const tx = ex/len, ty = ey/len;                 // 沿斜面向左下的单位切向
+    const t = Math.max(0, Math.min(1, ((f.x - Tx)*ex + (f.y - Ty)*ey)/len2));
     const cx = Tx + t*ex, cy = Ty + t*ey;
     let dx = f.x - cx, dy = f.y - cy;
     let d = Math.hypot(dx, dy);
     if(d < f.r){
-      if(d === 0){ dx = -ey; dy = ex; d = Math.hypot(dx, dy); }
-      const nx = dx/d, ny = dy/d;
-      f.x = cx + nx*f.r; f.y = cy + ny*f.r;
-      const vn = f.vx*nx + f.vy*ny;
+      if(d === 0){ dx = -ty; dy = tx; d = 1; }       // 恰好压在斜面上时给个朝外方向
+      const nx = dx/d, ny = dy/d;                    // 从斜面指向碎片的朝外法向
+      const vn = f.vx*nx + f.vy*ny;                  // 法向速度（朝外为正）
+      const vt = f.vx*tx + f.vy*ty;                  // 切向速度（沿斜面）
+      f.x = cx + nx*f.r; f.y = cy + ny*f.r;          // 位置修正：推到斜面外
       if(vn < 0){
-        if(-vn > 80){ f.vx -= (1+REST)*vn*nx; f.vy -= (1+REST)*vn*ny; }  // 快速冲击才反弹
-        else { f.vx -= vn*nx; f.vy -= vn*ny; }                              // 慢速贴住不弹
+        if(-vn > 80){ f.vx -= (1+REST)*vn*nx; f.vy -= (1+REST)*vn*ny; }   // 快速冲击反弹
+        else { f.vx -= vn*nx; f.vy -= vn*ny; }                             // 慢速贴住
       }
-      f.vx *= 0.85; f.vy *= 0.85;                                            // 斜面摩擦，停止滑动
+      // 切向摩擦：动摩擦减速，静摩擦让碎片真正停在斜面上（而不是一直往下滑）
+      const vtx = vt*tx, vty = vt*ty;
+      if(Math.abs(vt) < 42){ f.vx -= vtx; f.vy -= vty; }
+      else { f.vx -= 0.14*vtx; f.vy -= 0.14*vty; }
     }
   }
   function pair(a, b){
@@ -748,6 +760,8 @@ document.querySelectorAll('#topbar .tabs button').forEach(b=>b.onclick=()=>navTo
     assembleStart = performance.now();
     activeFrags = frags.filter(f=>f.set.key === setKey).map(f=>{ const p = layout(f.set, f.ci); return { f, tx:p.cx, ty:p.cy }; });
     mode = 'assemble';
+    // 组成动画期间：其余无关碎片淡出，只留目标标题的偏旁
+    frags.forEach(f=>{ if(f.set.key !== setKey) f.el.style.opacity = '0'; });
     setTimeout(()=>{                                   // 碎片到位 → 显形完整字
       chars.filter(c=>c.set.key === setKey).forEach(c=>{ const p = layout(c.set, c.i);
         c.el.style.fontSize = p.cs + 'px';
@@ -1201,6 +1215,13 @@ cloudUpsert('notes', window.NOTES);
     });
   }
 
+  function spinCross(btn){
+    if(!btn) return;
+    btn.classList.remove('spin');
+    void btn.offsetWidth;                        // 强制回流，让转圈动画可重复触发
+    btn.classList.add('spin');
+  }
+
   function openEditor(n){
     edBarTitle.textContent = n ? '编辑文章' : '写文章';
     edTitle.value = n ? (n.title||'') : '';
@@ -1280,7 +1301,7 @@ cloudUpsert('notes', window.NOTES);
           <h1>${escN(NT.meta.title || '理论笔记')}</h1>
           ${NT.meta.desc ? `<p class="desc">${escN(NT.meta.desc)}</p>` : ''}
         </div>
-        <button class="ed-new" id="edNewBtn">＋ 写文章</button>
+        <button class="ed-cross" id="edNewBtn" title="写文章" aria-label="写文章"></button>
       </header>
       <div class="note-list">${
         NT.notes.length
@@ -1296,7 +1317,7 @@ cloudUpsert('notes', window.NOTES);
       }</div>`;
     wrap.querySelectorAll('.note-card').forEach(c=>c.onclick=()=>open(+c.dataset.id));
     const nb = wrap.querySelector('#edNewBtn');
-    if(nb) nb.onclick = ()=>openEditor(null);
+    if(nb) nb.onclick = ()=>{ spinCross(nb); setTimeout(()=>openEditor(null), 200); };
   }
 
   function renderArticle(n, backFn, backLabel){
@@ -1304,7 +1325,7 @@ cloudUpsert('notes', window.NOTES);
       <article class="article">
         <div class="article-top">
           <button class="back">${backLabel || '← 全部笔记'}</button>
-          <button class="edit-btn">编辑</button>
+          <button class="ed-cross" title="编辑" aria-label="编辑"></button>
         </div>
         <header class="ahead">
           <div class="ntag">${shp(n.color)}${escN(n.tag)}</div>
@@ -1314,7 +1335,7 @@ cloudUpsert('notes', window.NOTES);
         <div class="body">${n.body || ''}</div>
       </article>`;
     wrap.querySelector('.back').onclick = backFn;
-    wrap.querySelector('.edit-btn').onclick = ()=>openEditor(n);
+    wrap.querySelector('.ed-cross').onclick = (e)=>{ spinCross(e.currentTarget); setTimeout(()=>openEditor(n), 200); };
     window.scrollTo(0,0);
   }
 
