@@ -292,15 +292,15 @@ body{margin-top:52px}
 #noteEditor .ed-actions .b-download{background:var(--green);color:#fff}
 #noteEditor .ed-actions .b-copy{background:var(--ink);color:#fff}
 #noteEditor .ed-actions .b-cancel{background:transparent;color:var(--sub);border:1px solid var(--line)}
-/* 十字「写文章 / 编辑」按钮：黑色 + 号，点击转一圈 */
+/* 粗竖线「写文章 / 编辑」按钮：黑色竖杠，点击旋转一圈 */
 #moduleT .ed-cross{position:relative;width:44px;height:44px;display:inline-flex;align-items:center;justify-content:center;background:none;border:none;cursor:pointer;padding:0;flex:none}
-#moduleT .ed-cross::before,#moduleT .ed-cross::after{content:"";position:absolute;background:var(--ink);transition:background .15s}
-#moduleT .ed-cross::before{width:22px;height:2px}
-#moduleT .ed-cross::after{width:2px;height:22px}
-#moduleT .ed-cross:hover::before,#moduleT .ed-cross:hover::after{background:var(--blue)}
+#moduleT .ed-cross::before{content:"";position:absolute;left:50%;top:50%;width:6px;height:26px;background:var(--ink);transform:translate(-50%,-50%);transition:background .15s}
+#moduleT .ed-cross:hover::before{background:var(--blue)}
 #moduleT .ed-cross.spin{animation:crossSpin .5s cubic-bezier(.7,0,.3,1)}
 @keyframes crossSpin{to{transform:rotate(360deg)}}
-#moduleT .mhead .ed-cross{margin-left:auto}
+#moduleT .title-row{display:flex;align-items:center;gap:14px;flex-wrap:wrap}
+#moduleT .article .ahead .title-row{margin-top:14px}
+#moduleT .article .ahead .title-row h1{margin-top:0}
 #moduleT .article .article-top{display:flex;align-items:center;justify-content:space-between;margin-bottom:22px}
 #moduleT .article .article-top .back{margin-bottom:0}
 
@@ -1298,10 +1298,12 @@ cloudUpsert('notes', window.NOTES);
         </div>
         <div class="mhead-txt">
           <div class="kicker">${escN(NT.meta.kicker || 'THEORY NOTES')}</div>
-          <h1>${escN(NT.meta.title || '理论笔记')}</h1>
+          <div class="title-row">
+            <h1>${escN(NT.meta.title || '理论笔记')}</h1>
+            <button class="ed-cross" id="edNewBtn" title="写文章" aria-label="写文章"></button>
+          </div>
           ${NT.meta.desc ? `<p class="desc">${escN(NT.meta.desc)}</p>` : ''}
         </div>
-        <button class="ed-cross" id="edNewBtn" title="写文章" aria-label="写文章"></button>
       </header>
       <div class="note-list">${
         NT.notes.length
@@ -1325,11 +1327,13 @@ cloudUpsert('notes', window.NOTES);
       <article class="article">
         <div class="article-top">
           <button class="back">${backLabel || '← 全部笔记'}</button>
-          <button class="ed-cross" title="编辑" aria-label="编辑"></button>
         </div>
         <header class="ahead">
           <div class="ntag">${shp(n.color)}${escN(n.tag)}</div>
-          <h1>${escN(n.title)}</h1>
+          <div class="title-row">
+            <h1>${escN(n.title)}</h1>
+            <button class="ed-cross" title="编辑" aria-label="编辑"></button>
+          </div>
           <div class="ndate">${escN(n.date)}</div>
         </header>
         <div class="body">${n.body || ''}</div>
