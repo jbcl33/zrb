@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="zh-CN">
 <head>
 <meta charset="UTF-8">
@@ -91,7 +91,7 @@ body{margin-top:52px}
 #moduleR tbody tr:hover{background:#f3f0e6}
 #moduleR td.week{font-family:"Montserrat","Microsoft YaHei",sans-serif;font-weight:800;letter-spacing:.06em}
 #moduleR .toolbar{position:absolute;top:16px;right:16px;display:flex;gap:8px;z-index:9}
-#moduleR .toolbar button{font-family:"Montserrat","Microsoft YaHei",sans-serif;font-size:12px;font-weight:700;letter-spacing:.15em;padding:10px 18px;background:var(--ink);color:#fff;cursor:pointer}
+#moduleR .toolbar button,#moduleR .toolbar a{font-family:"Montserrat","Microsoft YaHei",sans-serif;font-size:12px;font-weight:700;letter-spacing:.15em;padding:10px 18px;background:var(--ink);color:#fff;cursor:pointer;text-decoration:none;display:inline-flex;align-items:center}
 #moduleR.editing .edit-toggle{background:var(--red)}
 #moduleR.editing td{cursor:text}
 #moduleR.editing td:focus{outline:1.5px dashed var(--blue);outline-offset:-1px;background:#eef2f8}
@@ -368,16 +368,16 @@ body{margin-top:52px}
 <nav id="topbar">
   <div class="tabs">
     <button data-mod="home" class="on" title="首页"><span class="ic ic-dot"></span></button>
-    <button data-mod="roster" title="宿舍值日表"><span class="ic ic-sq"></span></button>
-    <button data-mod="bank" title="电工刷题"><span class="ic ic-tri"></span></button>
-    <button data-mod="notes" title="理论笔记"><span class="ic ic-circle"></span></button>
+    <button data-mod="roster" title="管理页面"><span class="ic ic-sq"></span></button>
+    <button data-mod="bank" title="工具项目"><span class="ic ic-tri"></span></button>
+    <button data-mod="notes" title="理论学习"><span class="ic ic-circle"></span></button>
   </div>
 </nav>
 
 <!-- ========== 首页：几何构成（无文字） ========== -->
 <div id="moduleH" class="module on">
-  <button class="sh-red" onclick="navTo('roster')" aria-label="宿舍值日表"></button>
-  <button class="sh-tri" onclick="navTo('bank')" aria-label="电工刷题"></button>
+  <button class="sh-red" onclick="navTo('roster')" aria-label="管理页面"></button>
+  <button class="sh-tri" onclick="navTo('bank')" aria-label="工具项目"></button>
   <button class="sh-dot" onclick="navTo('notes')" aria-label="理论学习"></button>
   <span class="sh-reveal"></span>
   <span class="sh-label" id="sh-label"></span>
@@ -392,6 +392,7 @@ body{margin-top:52px}
   <div class="sheet">
     <div class="page">
       <div class="toolbar">
+        <a href="portal.html">&larr; 管 理 页 面</a>
         <button class="export-toggle" id="exportBtn">导 出 图 片</button>
         <button class="edit-toggle" id="editBtn">编 辑 模 式</button>
       </div>
@@ -550,6 +551,10 @@ function switchMod(name){
 }
 function navTo(name){
   const H = document.getElementById('moduleH');
+  if(name === 'roster' && !H.classList.contains('on')){
+    location.href = 'portal.html';        // 红色正方形 = 管理 → 管理页面
+    return;
+  }
   if(name === 'home' || !H.classList.contains('on')){
     switchMod(name);
     return;
@@ -566,14 +571,14 @@ document.querySelectorAll('#topbar .tabs button').forEach(b=>b.onclick=()=>navTo
   if(!layer) return;
   const H = document.getElementById('moduleH');
   const SETS = [
-    { key:'roster', title:['宿','舍','值','日','表'],
-      parts:[['宀','亻','百'],['人','干','口'],['亻','直'],['日'],['主','衣']],
+    { key:'roster', title:['管','理','页','面'],
+      parts:[['⺮','宀','㠯'],['王','田','土'],['丆','贝'],['丆','囬']],
       palette:['var(--red)','var(--blue)','var(--ink)','var(--orange)','var(--green)','var(--violet)'] },
-    { key:'bank', title:['电','工','刷','题'],
-      parts:[['田','乚'],['一','丨','一'],['尸','巾','刂'],['日','疋','丆','贝']],
+    { key:'bank', title:['工','具','项','目'],
+      parts:[['一','丄'],['具'],['工','丆','贝'],['目']],
       palette:['var(--orange)','var(--blue)','var(--ink)','var(--red)','var(--green)','var(--violet)'] },
     { key:'notes', title:['理','论','学','习'],
-      parts:[['王','里'],['讠','仑'],['龸','子'],['冫','𠃌']],
+      parts:[['王','田','土'],['讠','仑'],['龸','子'],['冫','𠃌']],
       palette:['var(--red)','var(--yellow)','var(--ink)','var(--orange)','var(--green)','var(--violet)'],
       charColor:'#ffffff' },
   ];
@@ -775,7 +780,7 @@ document.querySelectorAll('#topbar .tabs button').forEach(b=>b.onclick=()=>navTo
       veil.className = 'veil ' + (setKey === 'roster' ? 'veil-red' : 'veil-yellow');
       setTimeout(()=>{ veil.classList.add('show'); }, 1500);
     }
-    setTimeout(()=>{ switchMod(setKey); reset(); }, 1850);
+    setTimeout(()=>{ if(setKey === 'roster'){ location.href = 'portal.html'; } else { switchMod(setKey); reset(); } }, 1850);
     setTimeout(()=>{ veil.classList.remove('show'); H.dataset.animing = '0'; }, 1950);
   }
   function reset(){

@@ -1,0 +1,216 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>管理页面 · 宿舍值日表 / 嵌入式学习表</title>
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700;800;900&family=Archivo:wght@400;700;900&display=swap" rel="stylesheet">
+<style>
+/* ===================== 调色板（全站一致） ===================== */
+:root{
+  --red:#d3202e; --blue:#1f4fa3; --yellow:#f2b90f;
+  --green:#20a040; --orange:#e07820; --violet:#6040c0;
+  --ink:#141414; --paper:#FFFFFF; --sub:#6b6b6b; --line:#EBEBEB;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+html,body{height:100%}
+body{font-family:"Montserrat","Microsoft YaHei","PingFang SC",sans-serif;background:var(--paper);color:var(--ink);font-size:15px;line-height:1.6;overflow:hidden;-webkit-print-color-adjust:exact;print-color-adjust:exact}
+a{text-decoration:none;color:inherit;touch-action:manipulation}
+html{-webkit-tap-highlight-color:transparent}
+
+/* ===================== 顶部导航（全站一致） ===================== */
+.topnav{position:fixed;top:0;left:0;right:0;z-index:100;padding:0 22px;height:52px;display:flex;align-items:center;justify-content:flex-end}
+.topnav .tabs{display:flex;gap:14px;align-items:center;background:rgba(255,255,255,.82);padding:6px 12px;border-radius:24px;backdrop-filter:blur(6px)}
+.topnav a{width:38px;height:38px;padding:0;display:flex;align-items:center;justify-content:center;background:none;border:none;cursor:pointer;text-decoration:none}
+.topnav a .ic{transition:transform .22s}
+.topnav a.cur .ic{transform:scale(1.35)}
+.topnav .ic-dot{width:14px;height:14px;border-radius:50%;background:var(--ink)}
+.topnav .ic-sq{width:16px;height:16px;background:var(--red)}
+.topnav .ic-tri{width:0;height:0;border-left:11px solid transparent;border-right:11px solid transparent;border-bottom:19px solid var(--yellow)}
+.topnav .ic-circle{width:15px;height:15px;border-radius:50%;background:var(--blue)}
+
+/* ===================== 像素画布（满屏红蓝方块，随机打乱） ===================== */
+#stage{position:fixed;inset:0;z-index:1;overflow:hidden;background:#141414}
+#pixel{display:grid;width:100%;height:100%;perspective:1100px}
+.cell{transition:transform .22s cubic-bezier(.4,0,.4,1)}
+
+/* ===================== 左侧空白面板 ===================== */
+.panel{position:fixed;left:0;top:0;bottom:0;width:clamp(300px,30vw,400px);z-index:10;background:var(--paper);display:flex;flex-direction:column;padding:60px 40px 40px;box-shadow:12px 0 40px rgba(0,0,0,.06)}
+.ptitle{font-family:"Microsoft YaHei","PingFang SC",sans-serif;font-size:clamp(44px,5vw,72px);font-weight:900;letter-spacing:0;line-height:1;color:var(--ink);writing-mode:vertical-rl;text-align:left;align-self:flex-start}
+.pdot{width:16px;height:16px;border-radius:50%;background:var(--ink);flex:none;margin:30px 0 0 4px}
+
+.entries{margin-top:38px;display:flex;flex-direction:column;gap:6px}
+.pe{display:flex;align-items:center;gap:16px;padding:16px 4px;cursor:pointer;position:relative}
+.pe .pe-sq{width:24px;height:24px;flex:none;transition:transform .25s cubic-bezier(.7,0,.3,1)}
+.pe[data-color="red"] .pe-sq{background:var(--red)}
+.pe[data-color="blue"] .pe-sq{background:var(--blue)}
+.pe .pe-body{display:flex;flex-direction:column;gap:3px;min-width:0}
+.pe .pe-name{font-family:"Microsoft YaHei","PingFang SC",sans-serif;font-size:22px;font-weight:800;letter-spacing:.05em;line-height:1.15}
+.pe .pe-en{font-size:10px;font-weight:700;letter-spacing:.22em;text-transform:uppercase;color:var(--sub)}
+.pe .pe-arrow{font-family:"Montserrat",sans-serif;font-size:18px;font-weight:700;color:var(--sub);margin-left:auto;opacity:0;transform:translateX(-6px);transition:opacity .22s,transform .22s}
+.pe:hover .pe-sq{transform:scale(1.18)}
+.pe:hover .pe-name{color:var(--ink)}
+.pe:hover .pe-arrow{opacity:1;transform:translateX(0)}
+.pe.on .pe-sq{transform:scale(1.25)}
+
+.panel .note{margin-top:auto;font-size:11px;letter-spacing:.14em;color:var(--sub);line-height:1.8}
+
+/* ===================== 手机端 ===================== */
+@media (max-width:720px){
+  .topnav{padding:0 12px}
+  .topnav .tabs{gap:4px;padding:5px 8px}
+  .topnav a{width:42px;height:42px}
+  .topnav .ic-dot{width:16px;height:16px}
+  .topnav .ic-sq{width:18px;height:18px}
+  .topnav .ic-tri{border-left-width:12px;border-right-width:12px;border-bottom-width:21px}
+  .topnav .ic-circle{width:17px;height:17px}
+
+  .panel{width:100%;height:auto;bottom:auto;flex-direction:column;padding:18px 22px 20px;box-shadow:0 10px 30px rgba(0,0,0,.08)}
+  .ptitle{font-size:30px;letter-spacing:.14em;writing-mode:horizontal-tb}
+  .pdot{width:12px;height:12px;margin:14px 0 0 0}
+  .entries{flex-direction:row;gap:22px;margin-top:18px}
+  .pe{padding:10px 0;gap:11px}
+  .pe .pe-sq{width:20px;height:20px}
+  .pe .pe-name{font-size:17px}
+  .pe .pe-en{display:none}
+  .pe .pe-arrow{display:none}
+  .panel .note{display:none}
+}
+</style>
+</head>
+<body>
+
+<div id="stage"><div id="pixel"></div></div>
+
+<nav class="topnav">
+  <div class="tabs">
+    <a href="index.html" title="首页"><span class="ic ic-dot"></span></a>
+    <a href="portal.html" class="cur" title="管理页面"><span class="ic ic-sq"></span></a>
+    <a href="index.html#bank" title="工具项目"><span class="ic ic-tri"></span></a>
+    <a href="index.html#notes" title="理论学习"><span class="ic ic-circle"></span></a>
+  </div>
+</nav>
+
+<aside class="panel">
+  <h1 class="ptitle">管理页面</h1>
+  <span class="pdot"></span>
+
+  <div class="entries">
+    <a class="pe" data-color="red" href="index.html#roster">
+      <span class="pe-sq"></span>
+      <span class="pe-body">
+        <span class="pe-name">宿舍值日表</span>
+        <span class="pe-en">Dorm Duty Roster</span>
+      </span>
+      <span class="pe-arrow">&rarr;</span>
+    </a>
+
+    <a class="pe" data-color="blue" href="study.html">
+      <span class="pe-sq"></span>
+      <span class="pe-body">
+        <span class="pe-name">嵌入式学习表</span>
+        <span class="pe-en">Embedded Study</span>
+      </span>
+      <span class="pe-arrow">&rarr;</span>
+    </a>
+  </div>
+
+  <div class="note">RED — 宿舍值日表<br>BLUE — 嵌入式学习表</div>
+</aside>
+
+<script>
+/* ===================== 像素翻牌 + 水波纹 ===================== */
+(function(){
+  const RED = '#d3202e', BLUE = '#1f4fa3';
+  const pixel = document.getElementById('pixel');
+  let cells = [], flipping = false;
+
+  function buildGrid(){
+    const W = innerWidth, H = innerHeight;
+    const cell = Math.max(34, Math.round(Math.min(W, H) / 24));
+    const cols = Math.ceil(W / cell), rows = Math.ceil(H / cell);
+    const cw = W / cols, ch = H / rows;
+    pixel.style.gridTemplateColumns = `repeat(${cols}, 1fr)`;
+    pixel.style.gridTemplateRows = `repeat(${rows}, 1fr)`;
+    pixel.innerHTML = '';
+    cells = [];
+    for (let r = 0; r < rows; r++){
+      for (let c = 0; c < cols; c++){
+        const el = document.createElement('div');
+        el.className = 'cell';
+        const red = Math.random() < 0.5;
+        el.style.background = red ? RED : BLUE;
+        pixel.appendChild(el);
+        cells.push({ el, x: (c + 0.5) * cw, y: (r + 0.5) * ch, key: red ? 'red' : 'blue' });
+      }
+    }
+  }
+
+  function flip(c, target, key){
+    c.key = key;
+    c.el.style.transition = 'transform .22s cubic-bezier(.5,0,.5,1)';
+    c.el.style.transform = 'rotateY(90deg)';
+    setTimeout(()=>{
+      c.el.style.background = target;
+      c.el.style.transition = 'transform .22s cubic-bezier(.3,0,.3,1)';
+      c.el.style.transform = 'rotateY(0deg)';
+    }, 220);
+  }
+
+  function waveTo(key, ox, oy){
+    const target = key === 'red' ? RED : BLUE;
+    flipping = true;
+    cells.forEach(c=>{
+      if (c.key === key) return;
+      const d = Math.hypot(c.x - ox, c.y - oy);
+      setTimeout(()=>{ flip(c, target, key); }, Math.round(d * 0.45));
+    });
+    setTimeout(()=>{ flipping = false; }, 1500);
+  }
+
+  /* 待机：随机某个方块「闪一下」再恢复，让画面一直有生气 */
+  function glitch(){
+    if (flipping) return;
+    const c = cells[(Math.random() * cells.length) | 0];
+    if (!c) return;
+    const opp = c.key === 'red' ? BLUE : RED;
+    c.el.style.transition = 'transform .14s';
+    c.el.style.transform = 'rotateY(90deg)';
+    setTimeout(()=>{
+      c.el.style.background = opp;
+      c.el.style.transition = 'transform .14s';
+      c.el.style.transform = 'rotateY(0deg)';
+      setTimeout(()=>{
+        c.el.style.transition = 'transform .14s';
+        c.el.style.transform = 'rotateY(90deg)';
+        setTimeout(()=>{
+          c.el.style.background = c.key === 'red' ? RED : BLUE;
+          c.el.style.transform = 'rotateY(0deg)';
+        }, 140);
+      }, 320);
+    }, 140);
+  }
+
+  document.querySelectorAll('.pe').forEach(pe=>{
+    pe.addEventListener('click', e=>{
+      e.preventDefault();
+      const key = pe.dataset.color;
+      const href = pe.getAttribute('href');
+      pe.classList.add('on');
+      waveTo(key, e.clientX, e.clientY);
+      setTimeout(()=>{ location.href = href; }, 1250);
+    });
+  });
+
+  let rt;
+  addEventListener('resize', ()=>{
+    clearTimeout(rt);
+    rt = setTimeout(buildGrid, 160);
+  });
+
+  buildGrid();
+  setInterval(glitch, 700);
+})();
+</script>
+</body>
+</html>
