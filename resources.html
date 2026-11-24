@@ -2,7 +2,8 @@
 <html lang="zh-CN">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="theme-color" content="#ffffff">
 <title>纟</title>
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' fill='%23d3202e'/%3E%3C/svg%3E">
 <style>
@@ -11,7 +12,7 @@
   *{margin:0;padding:0;box-sizing:border-box}
   html{-webkit-tap-highlight-color:transparent}
   body{font-family:"Microsoft YaHei","PingFang SC",sans-serif;background:#fff;color:var(--ink);
-       height:100vh;overflow:hidden}
+       height:100vh;overflow:hidden;overscroll-behavior:none;position:fixed;width:100%}
   button{font-family:inherit;cursor:pointer;border:none;background:none;color:inherit}
   a{text-decoration:none;color:inherit}
   button,a{touch-action:manipulation}
@@ -83,6 +84,9 @@
   .fab::before{width:2.1cqw;height:.28cqw}
   .fab::after{width:.28cqw;height:2.1cqw}
   .fab.open{transform:rotate(45deg);background:var(--red)}
+  .fab.pulse{animation:fabPulse 1.5s cubic-bezier(.4,0,.2,1) .35s}
+  @keyframes fabPulse{0%{box-shadow:0 .5cqw 1.2cqw rgba(0,0,0,.3),0 0 0 0 rgba(20,20,20,.35)}
+    70%{box-shadow:0 .5cqw 1.2cqw rgba(0,0,0,.3),0 0 0 2.2cqw rgba(20,20,20,0)}100%{box-shadow:0 .5cqw 1.2cqw rgba(0,0,0,.3),0 0 0 0 rgba(20,20,20,0)}}
   .picker{position:absolute;right:4%;bottom:12.5%;z-index:79;display:flex;gap:1cqw;
           opacity:0;transform:translateY(1.2cqw);pointer-events:none;
           transition:opacity .22s,transform .28s cubic-bezier(.65,0,.3,1)}
@@ -120,6 +124,24 @@
   .art h1{font-size:3cqw;font-weight:900;line-height:1.3;outline:none;flex:none}
   .art .ab{margin-top:1.6cqw;font-size:1.75cqw;line-height:1.95;color:#2a2a2a;outline:none;overflow:auto;flex:1;padding-right:.6cqw}
   .art .ab:empty::before{content:attr(data-ph);color:#b9b2a3}
+
+  /* 老浏览器不支持容器查询时的兜底（避免按钮塌成 0 宽） */
+  @supports not (container-type: size){
+    .cat .cv{inset:24px}
+    .back{width:44px;height:44px}
+    .back::before,.back::after{width:18px;height:2px}
+    .fab{width:52px;height:52px}
+    .fab::before{width:21px;height:2px}
+    .fab::after{width:2px;height:21px}
+    .picker{gap:10px;bottom:96px}
+    .picker button{width:42px;height:42px}
+    .art .sheet{padding:24px 26px 18px}
+    .art h1{font-size:28px}
+    .art .ab{font-size:17px;line-height:1.9}
+    .art .dot{width:20px;height:20px}
+    .art .ax{font-size:24px}
+    .art .adel,.art .aopen{font-size:13px}
+  }
 
   @media (max-width:680px){
     .topnav{padding:0 12px}
@@ -204,34 +226,9 @@
   };
   const AREA   = { sq:1, tri:.5, dia:.5, pen:.68, hex:.78 };
   const COLORS = ['#f2b90f','#d3202e','#1f4fa3','#141414','#fffdf6','#20a040','#e07820','#6040c0'];
-  const KEY    = 'zrb-resources-v1';
+  const KEY    = 'zrb-resources-v3';
 
-  const SEED = {
-    red: [
-      { t:'宿舍值日表', s:'sq', c:'#fffdf6',
-        b:'周一 王浩然，周二 吴敏辉，周三 吴晋成，周四 空，周五 方懿拓，周六 武文杰，周日 全体。' },
-      { t:'嵌入式学习表', s:'hex', c:'#20a040',
-        b:'寄存器映射、时钟树、中断向量表、GPIO 复用、串口波特率计算。每周一张表，按外设推进，先跑通点灯，再上定时器与串口。' },
-      { t:'课程表', s:'pen', c:'#1f4fa3',
-        b:'周一 电气控制，周二 电机拖动，周三 安全用电，周四 实训，周五 自习。' }
-    ],
-    blue: [
-      { t:'电机', s:'tri', c:'#fffdf6',
-        b:'三相异步电动机按外壳防护方式分为开启式、防护式、封闭式三类。定子旋转磁场转速由电源频率与磁极对数决定：n₁=60f/p。转子总比同步转速略低，差值叫转差率，额定运行时约 1%~5%。启动瞬间转子电流很大，定子启动电流可达额定的 4~7 倍，所以大容量电机要降压启动。' },
-      { t:'安全规程', s:'sq', c:'#f2b90f',
-        b:'停电、验电、装设接地线、悬挂标示牌、装设遮栏，五步缺一不可。验电用电压等级相符的验电器，先在有电处试验。接地线先接接地端，后接导体端，拆除相反。' },
-      { t:'仪表', s:'dia', c:'#fffdf6',
-        b:'万用表实质是带整流器的磁电式仪表，测电阻时指针在刻度盘中间最准。' }
-    ],
-    yellow: [
-      { t:'题库', s:'sq', c:'#fffdf6', link:'index.html#bank',
-        b:'低压电工题库共 1 240 题，判断 620、单选 620。错题本 335 题，按安全类、仪表类、电机类、照明类、线路类分组复习。' },
-      { t:'手册', s:'hex', c:'#d3202e',
-        b:'常用导线载流量、熔体额定电流、接地电阻限值速查。' },
-      { t:'视频', s:'pen', c:'#141414',
-        b:'电机正反转接线实操录像，看完自己接一遍。' }
-    ]
-  };
+  const SEED = { red:[], blue:[], yellow:[] };
 
   const store = load();
   const measure = document.createElement('canvas').getContext('2d');
@@ -271,21 +268,31 @@
   }
 
   /* ---------- 初始摆位 ---------- */
+  /* 关闭态：正方形/正圆按同一尺寸算，三角形按固定宽高比，绝不随视口压扁 */
   const LAYOUT = {
-    red:    { w:0.26, h:0.44, x:0.06, y:0.10 },
-    blue:   { w:0.28, h:0.47, x:0.38, y:0.05 },
-    yellow: { w:0.38, h:0.30, x:0.16, y:0.60 }
+    red:    { w:0.24, aspect:1,    x:0.04, y:0.10 },
+    blue:   { w:0.26, aspect:1,    x:0.40, y:0.05 },
+    yellow: { w:0.34, aspect:0.62, x:0.62, y:0.56 }
+  };
+  const LAYOUT_S = {   /* 窄屏：错落铺满，别挤在一角 */
+    red:    { w:0.30, aspect:1,    x:0.06, y:0.05 },
+    blue:   { w:0.34, aspect:1,    x:0.45, y:0.23 },
+    yellow: { w:0.58, aspect:0.60, x:0.10, y:0.63 }
   };
   function placeCats(){
     const W = stage.clientWidth, H = stage.clientHeight;
     cats.forEach(c=>{
       if(c.classList.contains('open') || c.dataset.dragged === '1') return;
-      const L = LAYOUT[c.dataset.cat];
-      const w = W * L.w, h = Math.min(H * L.h, w * 1.15);
-      c.style.width = w + 'px';
+      const L = (W < 680 ? LAYOUT_S : LAYOUT)[c.dataset.cat];
+      let w = Math.min(W * L.w, (H * 0.52) / L.aspect);
+      w = Math.max(48, w);
+      const h = w * L.aspect;
+      const left = Math.max(8, Math.min(W * L.x, W - w - 8));
+      const top  = Math.max(8, Math.min(H * L.y, H - h - 8));
+      c.style.width  = w + 'px';
       c.style.height = h + 'px';
-      c.style.left = (W * L.x) + 'px';
-      c.style.top  = (H * L.y) + 'px';
+      c.style.left   = left + 'px';
+      c.style.top    = top + 'px';
     });
   }
 
@@ -449,8 +456,6 @@
     el._rect = { l:el.style.left, t:el.style.top, w:el.style.width, h:el.style.height };
     openCat = el;
     el.classList.add('open');
-    el.style.width  = stage.clientWidth + 'px';
-    el.style.height = stage.clientHeight + 'px';
     if(el.dataset.cat === 'yellow') el.classList.add('tri');
     stage.classList.add('stage-open');
     document.body.classList.add('board-open');
@@ -458,6 +463,16 @@
     el.style.height = stage.clientHeight + 'px';
     layoutCat(el);
     requestAnimationFrame(()=>layoutCat(el));
+    if(!el.querySelector('.post')) pulseFab();
+  }
+
+  let pulseT = null;
+  function pulseFab(){
+    clearTimeout(pulseT);
+    fab.classList.remove('pulse');
+    void fab.offsetWidth;
+    fab.classList.add('pulse');
+    pulseT = setTimeout(()=>fab.classList.remove('pulse'), 1600);
   }
 
   back.addEventListener('click', closeCat);
