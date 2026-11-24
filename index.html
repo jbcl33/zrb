@@ -3,7 +3,8 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>宿舍值日表 · 电工刷题 · 理论笔记</title>
+<title>纟</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' fill='%23d3202e'/%3E%3C/svg%3E">
 <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700;800;900&family=Archivo:wght@400;700;900&display=swap" rel="stylesheet">
 <style>
 /* ===================== 共享：调色板与模块框架 ===================== */
@@ -63,7 +64,7 @@ body{margin-top:52px}
 .veil-red{background:var(--red)}
 .veil-yellow{background:var(--yellow)}
 
-/* ===================== 模块一：宿舍值日表（原样式，作用域 #moduleR） ===================== */
+/* ===================== 模块一：项目页面 · 宿舍值日表（原样式，作用域 #moduleR） ===================== */
 #moduleR .sheet{width:210mm;max-width:100%;margin:24px auto;background:none}
 #moduleR .page{background:#fff;padding:44px 48px 48px;position:relative;overflow:hidden;min-height:297mm}
 #moduleR .layout{display:flex;gap:44px;align-items:flex-start;margin-top:30px}
@@ -368,17 +369,17 @@ body{margin-top:52px}
 <nav id="topbar">
   <div class="tabs">
     <button data-mod="home" class="on" title="首页"><span class="ic ic-dot"></span></button>
-    <button data-mod="roster" title="管理页面"><span class="ic ic-sq"></span></button>
-    <button data-mod="bank" title="工具项目"><span class="ic ic-tri"></span></button>
-    <button data-mod="notes" title="理论学习"><span class="ic ic-circle"></span></button>
+    <button data-mod="roster" title="项目页面"><span class="ic ic-sq"></span></button>
+    <button data-mod="bank" title="资源整合"><span class="ic ic-tri"></span></button>
+    <button data-mod="notes" title="理论笔记"><span class="ic ic-circle"></span></button>
   </div>
 </nav>
 
 <!-- ========== 首页：几何构成（无文字） ========== -->
 <div id="moduleH" class="module on">
-  <button class="sh-red" onclick="navTo('roster')" aria-label="管理页面"></button>
-  <button class="sh-tri" onclick="navTo('bank')" aria-label="工具项目"></button>
-  <button class="sh-dot" onclick="navTo('notes')" aria-label="理论学习"></button>
+  <button class="sh-red" onclick="navTo('roster')" aria-label="项目页面"></button>
+  <button class="sh-tri" onclick="navTo('bank')" aria-label="资源整合"></button>
+  <button class="sh-dot" onclick="navTo('notes')" aria-label="理论笔记"></button>
   <span class="sh-reveal"></span>
   <span class="sh-label" id="sh-label"></span>
   <div id="frag-layer"></div>
@@ -387,12 +388,12 @@ body{margin-top:52px}
 <!-- 转场色幕（跳转时覆盖画面再淡出） -->
 <div class="veil" id="sh-veil"></div>
 
-<!-- ========== 模块一：宿舍值日表 ========== -->
+<!-- ========== 模块一：项目页面 · 宿舍值日表 ========== -->
 <div id="moduleR" class="module">
   <div class="sheet">
     <div class="page">
       <div class="toolbar">
-        <a href="portal.html">&larr; 管 理 页 面</a>
+        <a href="portal.html">&larr; 项 目 页 面</a>
         <button class="export-toggle" id="exportBtn">导 出 图 片</button>
         <button class="edit-toggle" id="editBtn">编 辑 模 式</button>
       </div>
@@ -468,7 +469,7 @@ body{margin-top:52px}
   </div>
 </div>
 
-<!-- ========== 模块二：电工刷题 ========== -->
+<!-- ========== 资源整合：电工题库（#bank 直达） ========== -->
 <div id="moduleB" class="module">
   <svg width="0" height="0" style="position:absolute" aria-hidden="true"><defs><clipPath id="reuleaux" clipPathUnits="objectBoundingBox"><path d="M0.5,0.03 A0.82,0.82 0 0,1 0.95,0.74 A0.82,0.82 0 0,1 0.05,0.74 A0.82,0.82 0 0,1 0.5,0.03 Z"/></clipPath></defs></svg>
   <div class="wrap">
@@ -552,7 +553,11 @@ function switchMod(name){
 function navTo(name){
   const H = document.getElementById('moduleH');
   if(name === 'roster' && !H.classList.contains('on')){
-    location.href = 'portal.html';        // 红色正方形 = 管理 → 管理页面
+    location.href = 'portal.html';        // 红色正方形 = 项目页面
+    return;
+  }
+  if(name === 'bank' && !H.classList.contains('on')){
+    location.href = 'resources.html';     // 黄色三角形 = 资源整合
     return;
   }
   if(name === 'home' || !H.classList.contains('on')){
@@ -561,7 +566,7 @@ function navTo(name){
   }
   if(H.dataset.animing === '1') return;   // 动画进行中，忽略重复点击
   H.dataset.animing = '1';
-  window.fragAssemble(name);              // roster → 红条碎片组装；bank → 黄三角碎片组装
+  window.fragAssemble(name);              // roster → 红方块；bank → 黄三角；notes → 蓝圆
 }
 document.querySelectorAll('#topbar .tabs button').forEach(b=>b.onclick=()=>navTo(b.dataset.mod));
 
@@ -571,14 +576,14 @@ document.querySelectorAll('#topbar .tabs button').forEach(b=>b.onclick=()=>navTo
   if(!layer) return;
   const H = document.getElementById('moduleH');
   const SETS = [
-    { key:'roster', title:['管','理','页','面'],
-      parts:[['⺮','宀','㠯'],['王','田','土'],['丆','贝'],['丆','囬']],
+    { key:'roster', title:['项','目','页','面'],
+      parts:[['工','页'],['目'],['丆','贝'],['丆','囬']],
       palette:['var(--red)','var(--blue)','var(--ink)','var(--orange)','var(--green)','var(--violet)'] },
-    { key:'bank', title:['工','具','项','目'],
-      parts:[['一','丄'],['具'],['工','丆','贝'],['目']],
+    { key:'bank', title:['资','源','整','合'],
+      parts:[['次','贝'],['氵','厂','白','小'],['束','攵','正'],['人','一','口']],
       palette:['var(--orange)','var(--blue)','var(--ink)','var(--red)','var(--green)','var(--violet)'] },
-    { key:'notes', title:['理','论','学','习'],
-      parts:[['王','田','土'],['讠','仑'],['龸','子'],['冫','𠃌']],
+    { key:'notes', title:['理','论','笔','记'],
+      parts:[['王','田','土'],['讠','仑'],['⺮','毛'],['讠','己']],
       palette:['var(--red)','var(--yellow)','var(--ink)','var(--orange)','var(--green)','var(--violet)'],
       charColor:'#ffffff' },
   ];
@@ -780,7 +785,7 @@ document.querySelectorAll('#topbar .tabs button').forEach(b=>b.onclick=()=>navTo
       veil.className = 'veil ' + (setKey === 'roster' ? 'veil-red' : 'veil-yellow');
       setTimeout(()=>{ veil.classList.add('show'); }, 1500);
     }
-    setTimeout(()=>{ if(setKey === 'roster'){ location.href = 'portal.html'; } else { switchMod(setKey); reset(); } }, 1850);
+    setTimeout(()=>{ if(setKey === 'roster'){ location.href = 'portal.html'; } else if(setKey === 'bank'){ location.href = 'resources.html'; } else { switchMod(setKey); reset(); } }, 1850);
     setTimeout(()=>{ veil.classList.remove('show'); H.dataset.animing = '0'; }, 1950);
   }
   function reset(){
@@ -879,7 +884,7 @@ document.querySelectorAll('#topbar .tabs button').forEach(b=>b.onclick=()=>navTo
   requestAnimationFrame(step);
 })();
 
-/* ===================== 模块一：宿舍值日表（原功能：编辑/导出/云端同步） ===================== */
+/* ===================== 模块一：项目页面 · 宿舍值日表（原功能：编辑/导出/云端同步） ===================== */
 (function(){
   const R = document.getElementById('moduleR');
   const KEY = 'dorm-roster-data';

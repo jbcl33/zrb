@@ -30,3 +30,6 @@ weixin_*.html
 *.py
 data_new.js
 错题整理.txt
+
+# ===== 本地工作目录 =====
+.superpowers/
